@@ -19,20 +19,49 @@
     nav a.logo{font-weight:700;font-size:1.25rem;color:var(--primary);text-decoration:none;}
     nav ul{list-style:none;display:flex;gap:1rem;}
     nav ul li a{text-decoration:none;color:var(--text);font-weight:500;}
-    nav ul li a:hover{color:var(--primary);}  
-    .hero{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:8rem 1rem 4rem;background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;}
+    nav ul li a:hover{color:var(--primary);}   
+    .hero{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:8rem 1rem 4rem; /* Responsive padding */
+      background:linear-gradient(135deg,var(--primary),var(--accent));
+      color:#fff;
+      width:100%; /* Ensure it takes full width */
+    }
     .hero img{width:140px;height:140px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,.5);margin-bottom:1rem;}
     .hero h1{font-size:2.5rem;margin-bottom:.5rem;}
     .hero p{max-width:600px;font-size:1.1rem;margin-bottom:1.5rem;}
     .btn{display:inline-block;padding:.75rem 1.5rem;border-radius:9999px;background:#fff;color:var(--primary);font-weight:600;text-decoration:none;transition:background .3s;}
-    .btn:hover{background:rgba(255,255,255,.9);}  
-    section{max-width:1100px;margin:3rem auto;padding:0 1rem;}
+    .btn:hover{background:rgba(255,255,255,.9);}   
+    
+    /* Removed max-width and margin from section to allow hero to be full width */
+    section{
+      margin:3rem auto; /* Still keep margin for sections below hero */
+      padding:0 1rem; /* Keep padding for sections below hero */
+    }
+
+    /* New container class for content within sections to maintain max-width */
+    .container {
+      max-width:1100px;
+      margin:0 auto;
+      padding:0 1rem;
+    }
+
     section h2{font-size:1.8rem;margin-bottom:1rem;color:var(--primary);text-align:center;}
     .projects-grid{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));}
     .card{background:#fff;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 4px rgba(0,0,0,.05);display:flex;flex-direction:column;justify-content:space-between;}
     .card h3{font-size:1.25rem;margin-bottom:.5rem;}
     .card a{margin-top:1rem;color:var(--accent);font-weight:600;text-decoration:none;}
     .card a:hover{text-decoration:underline;}
+    .card iframe {
+      width: 100%;
+      aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
+      border-radius: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
     /* Certificates */
     .cert-list{list-style:none;padding:0;display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}
     .cert-item{background:#fff;padding:1rem 1.25rem;border-left:4px solid var(--secondary);border-radius:.5rem;box-shadow:0 1px 3px rgba(0,0,0,.05);}
@@ -42,6 +71,24 @@
     .contact{text-align:center;}
     .contact a{color:var(--accent);margin:0 .5rem;font-weight:600;text-decoration:none;}
     footer{text-align:center;padding:2rem 0;background:#fff;margin-top:3rem;}
+
+    /* Media queries for responsiveness (optional, as current setup is already fluid) */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+      nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      nav {
+        flex-direction: column;
+      }
+    }
   </style>
 </head>
 <body>
@@ -59,59 +106,113 @@
 
   <main>
     <section class="hero">
+      <!-- The hero content remains centered within the full-width background -->
       <img src="profile.jpg" alt="Uvais Saifi profile picture">
       <h1>Uvais Saifi</h1>
-      <p>Data Scientist & Generative AI Engineer passionate about transforming ideas into intelligent solutions.</p>
+      <p>Data Scientist & Generative AI Engineer passionate about transforming ideas into intelligent solutions.</p>
       <a class="btn" href="#projects">View My Work</a>
     </section>
 
     <section id="about">
-      <h2>About Me</h2>
-      <p>Certified data science & AI professional with hands‑on experience in machine learning, deep learning, NLP, and computer vision. Skilled in Python, TensorFlow, scikit‑learn, SQL, and end‑to‑end product deployment. I enjoy building impactful solutions—ranging from mental‑health emotion detection to healthcare diagnostics and content recommendation systems.</p>
+      <div class="container">
+        <h2>About Me</h2>
+        <p>Certified data science & AI professional with hands‑on experience in machine learning, deep learning, NLP, and computer vision. Skilled in Python, TensorFlow, scikit‑learn, SQL, and end‑to‑end product deployment. I enjoy building impactful solutions—ranging from mental‑health emotion detection to healthcare diagnostics and content recommendation systems.</p>
+      </div>
     </section>
 
     <section id="projects">
-      <h2>Selected Projects</h2>
-      <div class="projects-grid">
-        <div class="card">
-          <h3>Mental Health Detection App</h3>
-          <p>Streamlit web app that performs real‑time multi‑modal emotion analysis (text & voice) to flag early mental‑health signals.</p>
-          <a href="https://github.com/Uvais5/your-mental-health-repo" target="_blank">GitHub →</a>
-        </div>
-        <div class="card">
-          <h3>Flexible Emotion Detection System</h3>
-          <p>Modular system using transformers + OpenCV to classify emotions from text, audio, or video inputs with 90%+ accuracy.</p>
-          <a href="https://github.com/Uvais5/your-emotion-detection-repo" target="_blank">GitHub →</a>
-        </div>
-        <div class="card">
-          <h3>Anime Recommendation System</h3>
-          <p>Content‑based recommender leveraging cosine similarity & scraped metadata, deployed on Heroku for public demo.</p>
-          <a href="https://github.com/Uvais5/Anime_Recommendation_System" target="_blank">GitHub →</a>
-        </div>
-        <div class="card">
-          <h3>COVID‑19 X‑Ray Classifier</h3>
-          <p>Transfer‑learning CNN that detects COVID‑19 from chest X‑rays; Streamlit interface achieving 92% accuracy on NIH data.</p>
-          <a href="https://github.com/Uvais5/Covid-19_X_Ray_Image_Classification_end_to_end" target="_blank">GitHub →</a>
+      <div class="container">
+        <h2>Selected Projects</h2>
+        <div class="projects-grid">
+          <div class="card">
+            <h3>Anime Recommendation System</h3>
+            <p>Content‑based recommender leveraging cosine similarity & scraped metadata, deployed on Heroku for public demo.</p>
+            <iframe src="https://www.youtube.com/embed/kZP5kroO56Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <a href="https://github.com/Uvais5/Anime_Recommendation_System" target="_blank">GitHub →</a>
+          </div>
+          <div class="card">
+            <h3>Flexible Emotion Detector</h3>
+            <p>Modular system using transformers + OpenCV to classify emotions from text, audio, or video inputs with 90%+ accuracy.</p>
+            <iframe src="https://www.youtube.com/embed/DF53aO3G2jQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <a href="https://github.com/Uvais5/Flexible-Emotion-Detector" target="_blank">GitHub →</a>
+          </div>
+          <div class="card">
+            <h3>Dual Chatbot System – Personal Assistant & Data Expert</h3>
+            <p>A chatbot system that acts as a personal assistant and a data expert.</p>
+            <iframe src="https://www.youtube.com/embed/kc3UOvSVldE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <a href="https://github.com/Uvais5/chatbot" target="_blank">GitHub →</a>
+          </div>
+          <div class="card">
+            <h3>Stock Price Prediction Web App (with Prophet)</h3>
+            <p>An end-to-end stock price prediction web application using Streamlit and Prophet.</p>
+            <iframe src="https://www.youtube.com/embed/1_9JIDRSZOM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <a href="https://github.com/Uvais5/Stock_Price_Prediction_app" target="_blank">GitHub →</a>
+          </div>
+          <div class="card">
+            <h3>COVID‑19 X‑Ray Classifier</h3>
+            <p>Transfer‑learning CNN that detects COVID‑19 from chest X‑rays; Streamlit interface achieving 92% accuracy on NIH data.</p>
+            <iframe src="https://www.youtube.com/embed/1965Aa28cyQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <a href="https://github.com/Uvais5/Covid-19_X_Ray_Image_Classification_end_to_end" target="_blank">GitHub →</a>
+          </div>
+          <div class="card">
+            <h3>Hate Speech Detection</h3>
+            <p>End-to-end project for detecting hate speech.</p>
+            <a href="https://github.com/Uvais5/Hate_Speech_Detection_end_to_end" target="_blank">GitHub →</a>
+          </div>
+          <div class="card">
+            <h3>Health Insurance Prediction</h3>
+            <p>An end-to-end project for predicting health insurance.</p>
+            <a href="https://github.com/Uvais5/Health-end-to-end-project" target="_blank">GitHub →</a>
+          </div>
+          <div class="card">
+            <h3>Song Lyrics Scraper & NLP Dataset (2017–2024)</h3>
+            <p>Web scraping project to create a dataset of top artist songs with lyrics.</p>
+            <a href="https://github.com/Uvais5/Top-Artist-Songs-Dataset-Web-Scraping-Project-" target="_blank">GitHub →</a>
+            <a href="https://www.kaggle.com/datasets/uvaissaifi/top-artist-songs-with-lyrics-20172024/data" target="_blank">Kaggle Dataset →</a>
+          </div>
+          <div class="card">
+            <h3>Detect Behavior with Sensor Data</h3>
+            <p>Project focused on detecting behavior using sensor data.</p>
+            <a href="https://github.com/Uvais5/CMI---Detect-Behavior-with-Sensor-Data" target="_blank">GitHub →</a>
+          </div>
         </div>
       </div>
     </section>
 
     <section id="certificates">
-      <h2>Certifications</h2>
-      <ul class="cert-list">
-        <li class="cert-item"><a href="https://drive.google.com/file/d/1R7Mt2Znc7W8mP4_Kdw7Qf6Vzyv4m_dY0/view" target="_blank">Python with Data Science</a><span>Private Course / Self‑Paced</span></li>
-        <li class="cert-item"><a href="https://drive.google.com/file/d/1L1kJuCnzxcJX87dEfqQVQmUUt9dNKNaX/view" target="_blank">Machine Learning A‑Z™ (Hands‑On Python & R)</a><span>SuperDataScience • Udemy</span></li>
-        <li class="cert-item"><a href="https://www.udemy.com/certificate/UC-4c43ffcc-4dae-4638-bbdc-d6a780133712/" target="_blank">Certified Data Scientist</a><span>Udemy</span></li>
-        <li class="cert-item"><a href="https://www.coursera.org/account/accomplishments/verify/RVJGB5GZDKDN" target="_blank">Managing Big Data with MySQL</a><span>Coursera • Duke University</span></li>
-        <li class="cert-item"><a href="https://www.coursera.org/account/accomplishments/verify/49UCB3J3FI3G" target="_blank">Generative AI with Large Language Models</a><span>Coursera • DeepLearning.AI & Google Cloud</span></li>
-        <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14924177" target="_blank">Prompt Design in Vertex AI</a><span>Google Cloud Skills Boost</span></li>
-        <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15963212" target="_blank">Explore Generative AI with the Gemini API</a><span>Google Cloud Skills Boost</span></li>
-        <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14954330" target="_blank">Build Real‑World AI Applications with Gemini & Imagen</a><span>Google Cloud Skills Boost</span></li>
-        <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15379070" target="_blank">Develop GenAI App with Gemini & Streamlit</a><span>Google Cloud Skills Boost</span></li>
-        <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15037547" target="_blank">Inspect Rich Documents with Gemini Multimodality & RAG</a><span>Google Cloud Skills Boost</span></li>
-        <li class="cert-item"><a href="https://certificate.hack2skill.com/user/GenAI5-28M/2025H2S04GENAI-A01204" target="_blank">Gen AI Academy</a><span>Hack2Skill</span></li>
-      </ul>
+      <div class="container">
+        <h2>Certifications</h2>
+        <ul class="cert-list">
+          <li class="cert-item"><a href="https://drive.google.com/file/d/1R7Mt2Znc7W8mP4_Kdw7Qf6Vzyv4m_dY0/view" target="_blank">Python with Data Science</a><span>Private Course / Self‑Paced</span></li>
+          <li class="cert-item"><a href="https://drive.google.com/file/d/1L1kJuCnzxcJX87dEfqQVQmUUt9dNKNaX/view" target="_blank">Machine Learning A‑Z™ (Hands‑On Python & R)</a><span>SuperDataScience • Udemy</span></li>
+          <li class="cert-item"><a href="https://www.udemy.com/certificate/UC-4c43ffcc-4dae-4638-bbdc-d6a780133712/" target="_blank">Certified Data Scientist</a><span>Udemy</span></li>
+          <li class="cert-item"><a href="https://www.coursera.org/account/accomplishments/verify/RVJGB5GZDKDN" target="_blank">Managing Big Data with MySQL</a><span>Coursera • Duke University</span></li>
+          <li class="cert-item"><a href="https://www.coursera.org/account/accomplishments/verify/49UCB3J3FI3G" target="_blank">Generative AI with Large Language Models</a><span>Coursera • DeepLearning.AI & Google Cloud</span></li>
+          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14924177" target="_blank">Prompt Design in Vertex AI</a><span>Google Cloud Skills Boost</span></li>
+          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15963212" target="_blank">Explore Generative AI with the Gemini API</a><span>Google Cloud Skills Boost</span></li>
+          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14954330" target="_blank">Build Real‑World AI Applications with Gemini & Imagen</a><span>Google Cloud Skills Boost</span></li>
+          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15379070" target="_blank">Develop GenAI App with Gemini & Streamlit</a><span>Google Cloud Skills Boost</span></li>
+          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15037547" target="_blank">Inspect Rich Documents with Gemini Multimodality & RAG</a><span>Google Cloud Skills Boost</span></li>
+          <li class="cert-item"><a href="https://certificate.hack2skill.com/user/GenAI5-28M/2025H2S04GENAI-A01204" target="_blank">Gen AI Academy</a><span>Hack2Skill</span></li>
+        </ul>
+      </div>
     </section>
 
     <section id="contact" class="contact">
-      <h2>Get in Touch</h
+      <div class="container">
+        <h2>Get in Touch</h2>
+        <p>Feel free to connect with me on:</p>
+        <p>
+          <a href="mailto:your.email@example.com">Email</a> |
+          <a href="https://www.linkedin.com/in/uvaissaifi" target="_blank">LinkedIn</a> |
+          <a href="https://github.com/Uvais5" target="_blank">GitHub</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Uvais Saifi. All rights reserved.</p>
+  </footer>
+</body>
+</html>
