@@ -26,7 +26,7 @@
       align-items:center;
       justify-content:center;
       text-align:center;
-      padding:8rem 1rem 4rem; /* Responsive padding */
+      padding:8rem 1rem 4rem; /* Default padding for larger screens */
       background:linear-gradient(135deg,var(--primary),var(--accent));
       color:#fff;
       width:100%; /* Ensure it takes full width */
@@ -72,8 +72,11 @@
     .contact a{color:var(--accent);margin:0 .5rem;font-weight:600;text-decoration:none;}
     footer{text-align:center;padding:2rem 0;background:#fff;margin-top:3rem;}
 
-    /* Media queries for responsiveness (optional, as current setup is already fluid) */
+    /* Media queries for responsiveness */
     @media (max-width: 768px) {
+      .hero {
+        padding: 6rem 1rem 3rem; /* Reduced padding for smaller screens */
+      }
       .hero h1 {
         font-size: 2rem;
       }
@@ -87,6 +90,22 @@
       }
       nav {
         flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero {
+        padding: 5rem 1rem 2.5rem; /* Further reduced padding for very small screens */
+      }
+      .hero img {
+        width: 100px; /* Slightly smaller image on very small screens */
+        height: 100px;
+      }
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      .hero p {
+        font-size: 0.9rem;
       }
     }
   </style>
@@ -116,7 +135,7 @@
     <section id="about">
       <div class="container">
         <h2>About Me</h2>
-        <p>Certified data science & AI professional with hands‑on experience in machine learning, deep learning, NLP, and computer vision. Skilled in Python, TensorFlow, scikit‑learn, SQL, and end‑to‑end product deployment. I enjoy building impactful solutions—ranging from mental‑health emotion detection to healthcare diagnostics and content recommendation systems.</p>
+        <p>As a certified Data Scientist and Generative AI Engineer, I bring a robust skill set in machine learning, deep learning, NLP, and computer vision, honed through hands-on experience and end-to-end project deployment. My portfolio showcases impactful solutions, from real-time multi-modal emotion detection for mental health and flexible emotion classification systems, to content recommendation engines and predictive models like the Stock Price Prediction Web App. I'm particularly passionate about Generative AI, having completed extensive certifications including 'Generative AI with Large Language Models' and multiple Google Cloud Skills Boost badges in Gemini API and Imagen, allowing me to transform complex data into intelligent, deployable applications.</p>
       </div>
     </section>
 
@@ -182,9 +201,10 @@
     <section id="certificates">
       <div class="container">
         <h2>Certifications</h2>
+        <p>Click on each certification title to view the certificate document.</p>
         <ul class="cert-list">
           <li class="cert-item"><a href="https://drive.google.com/file/d/1R7Mt2Znc7W8mP4_Kdw7Qf6Vzyv4m_dY0/view" target="_blank">Python with Data Science</a><span>Private Course / Self‑Paced</span></li>
-          <li class="cert-item"><a href="https://drive.google.com/file/d/1L1kJuCnzxcJX87dEfqQVQmUUt9dNKNaX/view" target="_blank">Machine Learning A‑Z™ (Hands‑On Python & R)</a><span>SuperDataScience • Udemy</span></li>
+          <li class="cert-item"><a href="https://drive.google.com/file/d/1L1kJuCnzxcJX87dEfqQVQmMUt9dNKNaX/view" target="_blank">Machine Learning A‑Z™ (Hands‑On Python & R)</a><span>SuperDataScience • Udemy</span></li>
           <li class="cert-item"><a href="https://www.udemy.com/certificate/UC-4c43ffcc-4dae-4638-bbdc-d6a780133712/" target="_blank">Certified Data Scientist</a><span>Udemy</span></li>
           <li class="cert-item"><a href="https://www.coursera.org/account/accomplishments/verify/RVJGB5GZDKDN" target="_blank">Managing Big Data with MySQL</a><span>Coursera • Duke University</span></li>
           <li class="cert-item"><a href="https://www.coursera.org/account/accomplishments/verify/49UCB3J3FI3G" target="_blank">Generative AI with Large Language Models</a><span>Coursera • DeepLearning.AI & Google Cloud</span></li>
