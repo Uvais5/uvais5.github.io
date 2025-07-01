@@ -14,12 +14,26 @@
     }
     *{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
     body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
-    header{position:fixed;top:0;width:100%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.05);z-index:100;}
+    
+    header{
+      position:fixed;
+      top:0;
+      width:100%;
+      background:#fff;
+      box-shadow:0 2px 4px rgba(0,0,0,.05);
+      z-index:100;
+    }
     nav{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:1rem;}
     nav a.logo{font-weight:700;font-size:1.25rem;color:var(--primary);text-decoration:none;}
     nav ul{list-style:none;display:flex;gap:1rem;}
     nav ul li a{text-decoration:none;color:var(--text);font-weight:500;}
     nav ul li a:hover{color:var(--primary);}   
+
+    /* Add padding to the main content to account for the fixed header */
+    main {
+      padding-top: 5rem; /* Adjust this value based on your header's actual height */
+    }
+    
     .hero{
       display:flex;
       flex-direction:column;
@@ -37,13 +51,11 @@
     .btn{display:inline-block;padding:.75rem 1.5rem;border-radius:9999px;background:#fff;color:var(--primary);font-weight:600;text-decoration:none;transition:background .3s;}
     .btn:hover{background:rgba(255,255,255,.9);}   
     
-    /* Removed max-width and margin from section to allow hero to be full width */
     section{
       margin:3rem auto; /* Still keep margin for sections below hero */
       padding:0 1rem; /* Keep padding for sections below hero */
     }
 
-    /* New container class for content within sections to maintain max-width */
     .container {
       max-width:1100px;
       margin:0 auto;
@@ -74,6 +86,9 @@
 
     /* Media queries for responsiveness */
     @media (max-width: 768px) {
+      main {
+        padding-top: 6rem; /* Increase padding for mobile to account for taller header */
+      }
       .hero {
         padding: 6rem 1rem 3rem; /* Reduced padding for smaller screens */
       }
@@ -94,6 +109,9 @@
     }
 
     @media (max-width: 480px) {
+      main {
+        padding-top: 7rem; /* Further increase padding for very small screens if header is even taller */
+      }
       .hero {
         padding: 5rem 1rem 2.5rem; /* Further reduced padding for very small screens */
       }
