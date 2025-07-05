@@ -80,9 +80,43 @@
     .cert-item a{color:var(--accent);text-decoration:none;font-weight:600;}
     .cert-item a:hover{text-decoration:underline;}
     .cert-item span{display:block;font-size:.9rem;color:#475569;margin-top:.25rem;}
-    .contact{text-align:center;}
+    
+    /* Adjusted spacing for contact section */
+    .contact{
+      text-align:center;
+      margin-top: 5rem; /* Increased top margin for better separation */
+      padding-bottom: 2rem; /* Added padding to the bottom of the contact section */
+    }
     .contact a{color:var(--accent);margin:0 .5rem;font-weight:600;text-decoration:none;}
     footer{text-align:center;padding:2rem 0;background:#fff;margin-top:3rem;}
+
+    /* Updated style for language list items */
+    .language-list {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      list-style: none;
+      padding: 0;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .language-list li {
+      background: #E0E7FF; /* Lighter background for better contrast */
+      color: var(--primary); /* Text color from primary variable */
+      padding: 0.6rem 1.2rem; /* Slightly more padding */
+      border-radius: 9999px;
+      font-weight: 600; /* Bolder font weight */
+      font-size: 0.95rem; /* Slightly larger font size */
+      border: 1px solid var(--secondary); /* Subtle border */
+      box-shadow: 0 2px 5px rgba(0,0,0,0.08); /* Soft shadow */
+      transition: all 0.3s ease; /* Smooth transition for hover effects */
+    }
+    .language-list li:hover {
+      background: var(--secondary); /* Darker background on hover */
+      color: #fff; /* White text on hover */
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* More pronounced shadow on hover */
+      transform: translateY(-2px); /* Slight lift effect */
+    }
 
     /* Media queries for responsiveness */
     @media (max-width: 768px) {
@@ -98,6 +132,9 @@
       .hero-buttons {
         flex-direction: column; /* Stack buttons vertically on small screens */
         align-items: center;
+      }
+      .contact {
+        margin-top: 3rem; /* Adjust margin for smaller screens if needed */
       }
     }
 
@@ -140,10 +177,28 @@
       </div>
     </section>
 
+    <section id="education">
+      <div class="container">
+        <h2>Education</h2>
+        <ul class="cert-list">
+          <li class="cert-item">
+            <h3>Bachelor of Computer Applications (BCA)</h3>
+            <span>Indira Gandhi National Open University (IGNOU) • Delhi</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
     <section id="projects">
       <div class="container">
         <h2>Selected Projects</h2>
         <div class="projects-grid">
+          <div class="card">
+            <h3>Mental Health AI App (Working Prototype)</h3>
+            <p>A working prototype of a mental health AI application utilizing **RAG (Retrieval Augmented Generation)**, **Gemini API**, and **Image Generation** for enhanced functionality. This project is under active development.</p>
+            <iframe src="https://www.youtube.com/embed/wlqpN3FJWkk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <a href="https://github.com/Uvais5/Mental-Health-AI-App" target="_blank">GitHub →</a>
+          </div>
           <div class="card">
             <h3>Anime Recommendation System</h3>
             <p>Content‑based recommender leveraging cosine similarity & scraped metadata, deployed on Heroku for public demo.</p>
@@ -219,13 +274,25 @@
       </div>
     </section>
 
+    <section id="languages">
+      <div class="container">
+        <h2>Languages</h2>
+        <ul class="language-list">
+          <li>English</li>
+          <li>Hindi</li>
+          <li>Japanese</li>
+        </ul>
+        <p style="text-align: center; font-size: 0.9rem; color: #64748B; margin-top: 0.5rem;">(Indicates proficiency in these languages)</p>
+      </div>
+    </section>
+
     <section id="contact" class="contact">
       <div class="container">
         <h2>Get in Touch</h2>
         <p>Feel free to connect with me on:</p>
         <p>
           <a href="mailto:uvaissaifi523@gmail.com">Email</a> |
-          <a href="https://www.linkedin.com/in/uvaissaifi" target="_blank">LinkedIn</a> |
+          <a href="https://www.linkedin.com/in/uvais-saifi-187150236/" target="_blank">LinkedIn</a> |
           <a href="https://github.com/Uvais5" target="_blank">GitHub</a>
         </p>
       </div>
