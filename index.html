@@ -1,307 +1,390 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Uvais Saifi | Data Scientist Portfolio</title>
-  <style>
-    :root {
-      --primary:#4F46E5;
-      --secondary:#6366F1;
-      --accent:#0EA5E9;
-      --bg:#F8FAFC;
-      --text:#1E293B;
-    }
-    *{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
-    body{font-family:'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
-    
-    /* Removed header styles as the header element is removed */
-    
-    main {
-      padding-top: 0; /* No need for padding-top as there's no fixed header */
-    }
-    
-    .hero{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
-      padding:8rem 1rem 4rem; /* Default padding for larger screens */
-      background:linear-gradient(135deg,var(--primary),var(--accent));
-      color:#fff;
-      width:100%; /* Ensure it takes full width */
-    }
-    .hero img{
-      width:140px;
-      height:140px;
-      border-radius:50%;
-      object-fit:cover;
-      border:4px solid rgba(255,255,255,.5);
-      margin-bottom:1rem;
-    }
-    .hero h1{font-size:2.5rem;margin-bottom:.5rem;}
-    .hero p{max-width:600px;font-size:1.1rem;margin-bottom:1.5rem;}
-    .hero-buttons { /* New class for button container */
-      display: flex;
-      gap: 1rem; /* Space between buttons */
-      flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
-      justify-content: center;
-    }
-    .btn{display:inline-block;padding:.75rem 1.5rem;border-radius:9999px;background:#fff;color:var(--primary);font-weight:600;text-decoration:none;transition:background .3s;}
-    .btn:hover{background:rgba(255,255,255,.9);}   
-    
-    section{
-      margin:3rem auto; /* Still keep margin for sections below hero */
-      padding:0 1rem; /* Keep padding for sections below hero */
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uvais Saifi | Data Scientist & GenAI Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import for 'Inter' */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Even darker, GitHub-like background */
+        }
+        /* Custom scrollbar style for subtle look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; /* Gray-800 */ }
+        ::-webkit-scrollbar-thumb { background: #14b8a6; /* Teal-500 */ border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0d9488; /* Teal-600 */ }
 
-    .container {
-      max-width:1100px;
-      margin:0 auto;
-      padding:0 1rem;
-    }
-
-    section h2{font-size:1.8rem;margin-bottom:1rem;color:var(--primary);text-align:center;}
-    .projects-grid{display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));}
-    .card{background:#fff;border-radius:1rem;padding:1.5rem;box-shadow:0 2px 4px rgba(0,0,0,.05);display:flex;flex-direction:column;justify-content:space-between;}
-    .card h3{font-size:1.25rem;margin-bottom:.5rem;}
-    .card a{margin-top:1rem;color:var(--accent);font-weight:600;text-decoration:none;}
-    .card a:hover{text-decoration:underline;}
-    .card iframe {
-      width: 100%;
-      aspect-ratio: 16 / 9; /* Maintain 16:9 aspect ratio */
-      border-radius: 0.5rem;
-      margin-bottom: 0.75rem;
-    }
-    /* Certificates */
-    .cert-list{list-style:none;padding:0;display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}
-    .cert-item{background:#fff;padding:1rem 1.25rem;border-left:4px solid var(--secondary);border-radius:.5rem;box-shadow:0 1px 3px rgba(0,0,0,.05);}
-    .cert-item a{color:var(--accent);text-decoration:none;font-weight:600;}
-    .cert-item a:hover{text-decoration:underline;}
-    .cert-item span{display:block;font-size:.9rem;color:#475569;margin-top:.25rem;}
-    
-    /* Adjusted spacing for contact section */
-    .contact{
-      text-align:center;
-      margin-top: 5rem; /* Increased top margin for better separation */
-      padding-bottom: 2rem; /* Added padding to the bottom of the contact section */
-    }
-    .contact a{color:var(--accent);margin:0 .5rem;font-weight:600;text-decoration:none;}
-    footer{text-align:center;padding:2rem 0;background:#fff;margin-top:3rem;}
-
-    /* Updated style for language list items */
-    .language-list {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      list-style: none;
-      padding: 0;
-      margin-top: 1rem;
-      flex-wrap: wrap;
-    }
-    .language-list li {
-      background: #E0E7FF; /* Lighter background for better contrast */
-      color: var(--primary); /* Text color from primary variable */
-      padding: 0.6rem 1.2rem; /* Slightly more padding */
-      border-radius: 9999px;
-      font-weight: 600; /* Bolder font weight */
-      font-size: 0.95rem; /* Slightly larger font size */
-      border: 1px solid var(--secondary); /* Subtle border */
-      box-shadow: 0 2px 5px rgba(0,0,0,0.08); /* Soft shadow */
-      transition: all 0.3s ease; /* Smooth transition for hover effects */
-    }
-    .language-list li:hover {
-      background: var(--secondary); /* Darker background on hover */
-      color: #fff; /* White text on hover */
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15); /* More pronounced shadow on hover */
-      transform: translateY(-2px); /* Slight lift effect */
-    }
-
-    /* Media queries for responsiveness */
-    @media (max-width: 768px) {
-      .hero {
-        padding: 6rem 1rem 3rem; /* Reduced padding for smaller screens */
-      }
-      .hero h1 {
-        font-size: 2rem;
-      }
-      .hero p {
-        font-size: 1rem;
-      }
-      .hero-buttons {
-        flex-direction: column; /* Stack buttons vertically on small screens */
-        align-items: center;
-      }
-      .contact {
-        margin-top: 3rem; /* Adjust margin for smaller screens if needed */
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero {
-        padding: 5rem 1rem 2.5rem; /* Further reduced padding for very small screens */
-      }
-      .hero img {
-        width: 100px; /* Slightly smaller image on very small screens */
-        height: 100px;
-      }
-      .hero h1 {
-        font-size: 1.8rem;
-      }
-      .hero p {
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+        /* General card styling for consistency */
+        .professional-card {
+            background-color: #1f2937; /* Gray-800 */
+            transition: all 0.3s ease-in-out;
+            border: 1px solid #374151; /* Gray-700 */
+        }
+        .professional-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(20, 184, 166, 0.1); /* Subtle teal glow */
+            border-color: #14b8a6; /* Teal-500 hover border */
+        }
+    </style>
 </head>
-<body>
-  <!-- Removed the entire <header> section -->
+<body class="text-gray-100 min-h-screen">
 
-  <main>
-    <section class="hero">
-      <!-- Updated the src of this image to your profile.png -->
-      <img src="https://raw.githubusercontent.com/Uvais5/uvais5.github.io/master/profile.png" alt="Uvais Saifi profile picture">
-      <h1>Uvais Saifi</h1>
-      <p>Data Scientist & Generative AI Engineer passionate about transforming ideas into intelligent solutions.</p>
-      <div class="hero-buttons">
-        <a class="btn" href="#projects">View My Work</a>
-        <a class="btn" href="https://raw.githubusercontent.com/Uvais5/uvais5.github.io/master/Uvais-Saifi-DS-CV.pdf" download>Download CV</a>
-        
-      </div>
-    </section>
-
-    <section id="about">
-      <div class="container">
-        <h2>About Me</h2>
-        <p>As a certified Data Scientist and Generative AI Engineer, I bring a robust skill set in machine learning, deep learning, NLP, and computer vision, honed through hands-on experience and end-to-end project deployment. My portfolio showcases impactful solutions, from real-time multi-modal emotion detection for mental health and flexible emotion classification systems, to content recommendation engines and predictive models like the Stock Price Prediction Web App. I'm particularly passionate about Generative AI, having completed extensive certifications including 'Generative AI with Large Language Models' and multiple Google Cloud Skills Boost badges in Gemini API and Imagen, allowing me to transform complex data into intelligent, deployable applications.</p>
-      </div>
-    </section>
-
-    <section id="education">
-      <div class="container">
-        <h2>Education</h2>
-        <ul class="cert-list">
-          <li class="cert-item">
-            <h3>Bachelor of Computer Applications (BCA)</h3>
-            <span>Indira Gandhi National Open University (IGNOU) • Delhi</span>
-          </li>
-        </ul>
-      </div>
-    </section>
-
-    <section id="projects">
-      <div class="container">
-        <h2>Selected Projects</h2>
-        <div class="projects-grid">
-          <div class="card">
-            <h3>Mental Health AI App (Working Prototype)</h3>
-            <p>A working prototype of a mental health AI application utilizing RAG (Retrieval Augmented Generation), Gemini API, and Image Generation for enhanced functionality. This project is under active development.</p>
-            <iframe src="https://www.youtube.com/embed/wlqpN3FJWkk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            <a href="https://github.com/Uvais5/Mental-Health-AI-App" target="_blank">GitHub →</a>
-          </div>
-          <div class="card">
-            <h3>Anime Recommendation System</h3>
-            <p>Content‑based recommender leveraging cosine similarity & scraped metadata, deployed on Heroku for public demo.</p>
-            <iframe src="https://www.youtube.com/embed/kZP5kroO56Q" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            <a href="https://github.com/Uvais5/Anime_Recommendation_System" target="_blank">GitHub →</a>
-          </div>
-          <div class="card">
-            <h3>Flexible Emotion Detector</h3>
-            <p>Modular system using transformers + OpenCV to classify emotions from text, audio, or video inputs with 90%+ accuracy.</p>
-            <iframe src="https://www.youtube.com/embed/DF53aO3G2jQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            <a href="https://github.com/Uvais5/Flexible-Emotion-Detector" target="_blank">GitHub →</a>
-          </div>
-          <div class="card">
-            <h3>Dual Chatbot System – Personal Assistant & Data Expert</h3>
-            <p>A chatbot system that acts as a personal assistant and a data expert.</p>
-            <iframe src="https://www.youtube.com/embed/kc3UOvSVldE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            <a href="https://github.com/Uvais5/chatbot" target="_blank">GitHub →</a>
-          </div>
-          <div class="card">
-            <h3>Stock Price Prediction Web App (with Prophet)</h3>
-            <p>An end-to-end stock price prediction web application using Streamlit and Prophet.</p>
-            <iframe src="https://www.youtube.com/embed/1_9JIDRSZOM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            <a href="https://github.com/Uvais5/Stock_Price_Prediction_app" target="_blank">GitHub →</a>
-          </div>
-          <div class="card">
-            <h3>COVID‑19 X‑Ray Classifier</h3>
-            <p>Transfer‑learning CNN that detects COVID‑19 from chest X‑rays; Streamlit interface achieving 92% accuracy on NIH data.</p>
-            <iframe src="https://www.youtube.com/embed/1965Aa28cyQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            <a href="https://github.com/Uvais5/Covid-19_X_Ray_Image_Classification_end_to_end" target="_blank">GitHub →</a>
-          </div>
-          <div class="card">
-            <h3>Hate Speech Detection</h3>
-            <p>End-to-end project for detecting hate speech.</p>
-            <a href="https://github.com/Uvais5/Hate_Speech_Detection_end_to_end" target="_blank">GitHub →</a>
-          </div>
-          <div class="card">
-            <h3>Health Insurance Prediction</h3>
-            <p>An end-to-end project for predicting health insurance.</p>
-            <a href="https://github.com/Uvais5/Health-end-to-end-project" target="_blank">GitHub →</a>
-          </div>
-          <div class="card">
-            <h3>Song Lyrics Scraper & NLP Dataset (2017–2024)</h3>
-            <p>Web scraping project to create a dataset of top artist songs with lyrics.</p>
-            <a href="https://github.com/Uvais5/Top-Artist-Songs-Dataset-Web-Scraping-Project-" target="_blank">GitHub →</a>
-            <a href="https://www.kaggle.com/datasets/uvaissaifi/top-artist-songs-with-lyrics-20172024/data" target="_blank">Kaggle Dataset →</a>
-          </div>
-          <div class="card">
-            <h3>Detect Behavior with Sensor Data</h3>
-            <p>Project focused on detecting behavior using sensor data.</p>
-            <a href="https://github.com/Uvais5/CMI---Detect-Behavior-with-Sensor-Data" target="_blank">GitHub →</a>
-          </div>
+    <header class="shadow-2xl sticky top-0 bg-[#0d1117]/90 backdrop-blur-md z-20 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold text-teal-400">UVAIS SAIFI <span class="text-gray-500 font-medium text-lg">| GenAI & Data Science</span></h1>
+            <nav class="space-x-6 hidden md:block">
+                <a href="#summary" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Summary</a>
+                <a href="#skills" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Skills</a>
+                <a href="#projects" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Projects</a>
+                <a href="#certifications" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Certifications</a>
+                <a href="#languages" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Languages</a>
+                <a href="#contact" class="px-3 py-1.5 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition duration-300 text-sm">Contact</a>
+            </nav>
         </div>
-      </div>
-    </section>
+    </header>
 
-    <section id="certificates">
-      <div class="container">
-        <h2>Certifications</h2>
-        <p>Click on each certification title to view the certificate document.</p>
-        <ul class="cert-list">
-          <li class="cert-item"><a href="https://drive.google.com/file/d/1R7Mt2Znc7W8mP4_Kdw7Qf6Vzyv4m_dY0/view" target="_blank">Python with Data Science</a><span>Private Course / Self‑Paced</span></li>
-          <li class="cert-item"><a href="https://drive.google.com/file/d/1L1kJuCnzxcJX87dEfqQVQmMUt9dNKNaX/view" target="_blank">Machine Learning A‑Z™ (Hands‑On Python & R)</a><span>SuperDataScience • Udemy</span></li>
-          <li class="cert-item"><a href="https://www.udemy.com/certificate/UC-4c43ffcc-4dae-4638-bbdc-d6a780133712/" target="_blank">Certified Data Scientist</a><span>Udemy</span></li>
-          <li class="cert-item"><a href="https://www.coursera.org/account/accomplishments/verify/RVJGB5GZDKDN" target="_blank">Managing Big Data with MySQL</a><span>Coursera • Duke University</span></li>
-          <li class="cert-item"><a href="https://www.coursera.org/account/accomplishments/verify/49UCB3J3FI3G" target="_blank">Generative AI with Large Language Models</a><span>Coursera • DeepLearning.AI & Google Cloud</span></li>
-          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14924177" target="_blank">Prompt Design in Vertex AI</a><span>Google Cloud Skills Boost</span></li>
-          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15963212" target="_blank">Explore Generative AI with the Gemini API</a><span>Google Cloud Skills Boost</span></li>
-          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14954330" target="_blank">Build Real‑World AI Applications with Gemini & Imagen</a><span>Google Cloud Skills Boost</span></li>
-          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15379070" target="_blank">Develop GenAI App with Gemini & Streamlit</a><span>Google Cloud Skills Boost</span></li>
-          <li class="cert-item"><a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15037547" target="_blank">Inspect Rich Documents with Gemini Multimodality & RAG</a><span>Google Cloud Skills Boost</span></li>
-          <li class="cert-item"><a href="https://certificate.hack2skill.com/user/GenAI5-28M/2025H2S04GENAI-A01204" target="_blank">Gen AI Academy</a><span>Hack2Skill</span></li>
-        </ul>
-      </div>
-    </section>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-    <section id="languages">
-      <div class="container">
-        <h2>Languages</h2>
-        <ul class="language-list">
-          <li>English</li>
-          <li>Hindi</li>
-          <li>Japanese</li>
-        </ul>
-        <p style="text-align: center; font-size: 0.9rem; color: #64748B; margin-top: 0.5rem;">(Indicates proficiency in these languages)</p>
-      </div>
-    </section>
+        <section id="summary" class="text-center py-10 md:py-16">
+            <img class="w-40 h-40 rounded-full mx-auto mb-6 border-4 border-teal-500 shadow-2xl object-cover" 
+                src="https://raw.githubusercontent.com/Uvais5/uvais5.github.io/master/profile.png" 
+                alt="Uvais Saifi professional profile image"
+                onerror="this.onerror=null;this.src='https://placehold.co/160x160/1f2937/d1d5db?text=Profile';">
+            
+            <p class="text-lg font-semibold uppercase tracking-widest text-teal-400 mb-2">Uvais Saifi</p>
 
-    <section id="contact" class="contact">
-      <div class="container">
-        <h2>Get in Touch</h2>
-        <p>Feel free to connect with me on:</p>
-        <p>
-          <a href="mailto:uvaissaifi523@gmail.com">Email</a> |
-          <a href="https://www.linkedin.com/in/uvais-saifi-187150236/" target="_blank">LinkedIn</a> |
-          <a href="https://github.com/Uvais5" target="_blank">GitHub</a>
-        </p>
-      </div>
-    </section>
-  </main>
+            <h2 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight text-gray-50 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-sky-400">
+                Data Scientist | AI/ML Engineer
+            </h2>
+            <p class="text-xl text-gray-300 max-w-5xl mx-auto mb-10">
+                Certified in Generative AI and Machine Learning, specializing in the design and deployment of end-to-end solutions. Expertise includes building complex RAG systems, developing multi-modal classification models (NLP/CV), and leveraging cutting-edge tools like Gemini API and Imagen to create scalable, intelligent applications.
+            </p>
+            
+            <div class="flex justify-center space-x-4 flex-wrap gap-y-3">
+                <a href="https://github.com/Uvais5/uvais5.github.io/blob/master/Uvais-Saifi-AI.pdf" download class="flex items-center space-x-2 px-6 py-3 bg-gray-700 text-teal-400 font-semibold rounded-xl shadow-xl hover:bg-gray-600 transition duration-300 transform hover:scale-[1.02]">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <span>Download Full CV</span>
+                </a>
+                <a href="https://www.linkedin.com/in/uvais-saifi-187150236/" target="_blank" class="flex items-center space-x-2 px-6 py-3 bg-teal-600 text-white font-semibold rounded-xl shadow-xl hover:bg-teal-500 transition duration-300 transform hover:scale-[1.02]">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.5 22H3.5a1.5 1.5 0 01-1.5-1.5V3.5A1.5 1.5 0 013.5 2h17a1.5 1.5 0 011.5 1.5v17a1.5 1.5 0 01-1.5 1.5zM8 8a2 2 0 100-4 2 2 0 000 4zm-1 12v-9h2v9H7zm11 0h-2v-5c0-1.25-.75-1.75-1.75-1.75S13.5 13 13.5 14v6h-2v-9h2v.75c.67-1.23 2.05-1.75 3.12-1.75 2.15 0 3.38 1.45 3.38 3.5V20z"/></svg>
+                    <span>LinkedIn Profile</span>
+                </a>
+                <a href="https://github.com/Uvais5" target="_blank" class="flex items-center space-x-2 px-6 py-3 bg-gray-700 text-teal-400 font-semibold rounded-xl shadow-xl hover:bg-gray-600 transition duration-300 transform hover:scale-[1.02]">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.43 9.8 8.21 11.38.6.11.82-.26.82-.57 0-.28-.01-1.02-.02-2.01-3.34.73-4.04-1.61-4.04-1.61-.55-1.4-1.34-1.77-1.34-1.77-1.09-.75.08-.74.08-.74 1.21.08 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.49 1 .11-.77.42-1.31.76-1.61-2.67-.3-5.49-1.34-5.49-5.95 0-1.32.47-2.39 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23.95-.26 1.95-.39 2.95-.39s2.01.13 2.96.39c2.3-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.83 1.24 1.9 1.24 3.22 0 4.62-2.83 5.64-5.5 5.94.43.37.82 1.12.82 2.25 0 1.62-.01 2.93-.01 3.33 0 .31.22.68.83.57A12 12 0 0024 12C24 5.37 18.63 0 12 0z"/></svg>
+                    <span>GitHub Repos</span>
+                </a>
+            </div>
+        </section>
 
-  <script>
-    // Removed the JavaScript for adjusting main padding as the fixed header is gone.
-  </script>
+        <div class="grid lg:grid-cols-3 gap-8 my-16">
+            
+            <div class="lg:col-span-1">
+                <h3 class="text-3xl font-bold text-teal-400 mb-6 border-b border-teal-700/50 pb-2">Education</h3>
+                <div class="professional-card p-6 rounded-xl shadow-lg border-l-4 border-teal-600">
+                    <h4 class="text-xl font-semibold text-teal-300">Bachelor of Computer Applications (BCA)</h4>
+                    <p class="text-gray-400 mt-1">Indira Gandhi National Open University (IGNOU)</p>
+                    <p class="text-gray-500 text-sm">Delhi, India</p>
+                </div>
+            </div>
+
+            <div id="skills" class="lg:col-span-2">
+                <h3 class="text-3xl font-bold text-teal-400 mb-6 border-b border-teal-700/50 pb-2">Core Technical Skills</h3>
+                <div class="professional-card p-6 rounded-xl shadow-lg">
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                        <div>
+                            <p class="text-lg font-semibold text-sky-400 mb-2">Generative AI & NLP</p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
+                                <li>Gemini API (Multi-modal, RAG) \& Imagen</li>
+                                <li>RAG, Fine-tuning \& Prompt Engineering</li>
+                                <li>Transformers \& Attention Mechanisms</li>
+                                <li>Hugging Face,senetece transformers</li>
+                                <li>word2vec, TF-IDF, NLTK, spaCy</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <p class="text-lg font-semibold text-sky-400 mb-2">Machine Learning & Modeling</p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
+                                <li>Python (Pandas, NumPy, Scikit-learn)</li>
+                                <li>PyTorch, TensorFlow/Keras,ANN,CNN,RNN</li>
+                                <li>XGBoost, LightGBM</li>
+                                <li>Text Classification</li>
+                                <li>Recommendation Systems,EDA,Matplotlib</li>
+                                <li>Sentiment Analysis</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <p class="text-lg font-semibold text-sky-400 mb-2">Computer Vision & Data</p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
+                                <li>YOLO, OpenPose</li>
+                                <li>OpenCV, Mediapipe</li>
+                                <li>Data Scraping, Beautiful Soup</li>
+                                <li>JSON Parsing</li>
+                            </ul>
+                        </div>
+
+                        <div class="md:col-span-2 lg:col-span-3">
+                            <p class="text-lg font-semibold text-sky-400 mb-2">Deployment, Cloud \& Web Fundamentals</p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm flex flex-wrap gap-x-8">
+                                <li>Deployment: Streamlit, Gradio, Flask, Kivy</li>
+                                <li>Web: HTML, CSS, JavaScript (JS)</li>
+                                <li>Cloud/DB:AWS, GCP Fundamentals, SQL (MySQL, PostgreSQL),vertexAI</li>
+                                <li>Version Control: Git/GitHub</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full h-px bg-gray-700 my-12"></div>
+
+        
+
+        
+
+        <section id="projects" class="py-16">
+            <h3 class="text-4xl font-bold text-center mb-12 text-teal-400">Featured AI & Data Projects</h3>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                
+                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-6 mb-4 border-b border-gray-700 pb-2">Generative AI & RAG Applications</h4></div>
+
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <iframe src="https://www.youtube.com/embed/wlqpN3FJWkk" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Mental Health AI App (Prototype)</h5>
+                    <p class="text-gray-400 flex-grow text-sm">Working RAG prototype utilizing the Gemini API and Imagen for enhanced mental health support. Focuses on contextual guidance and empathetic multi-modal response generation. (NLP and AI)</p>
+                    <a href="https://github.com/Uvais5/Mental-Health-AI-App" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <iframe src="https://www.youtube.com/embed/ojCkCD_KkBM" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">RAG-based NLP Query Engine (Employee Data)</h5>
+                    <p class="text-gray-400 flex-grow text-sm">RAG system enabling employees to query structured data (CSV/Excel) using natural language. Transforms complex data analysis into simple conversational inputs, leveraging LLMs for semantic understanding. (NLP and AI)</p>
+                    <a href="https://github.com/Uvais5/NLP-Query-Engine-for-Employee-Data" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+                
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <iframe src="https://www.youtube.com/embed/kc3UOvSVldE" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Dual Chatbot System – Personal Assistant & Data Expert</h5>
+                    <p class="text-gray-400 flex-grow text-sm">A sophisticated system integrating two specialized chatbots for versatile conversational AI and data-driven insights. (NLP and AI)</p>
+                    <a href="https://github.com/Uvais5/chatbot" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center text-gray-500">No Demo/Video Available</div>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Hate Speech Detection (NLP Model)</h5>
+                    <p class="text-gray-400 flex-grow text-sm">Deep learning model for real-time detection and classification of offensive or hateful language in text data. (NLP and AI)</p>
+                    <a href="https://github.com/Uvais5/Hate_Speech_Detection_end_to_end" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+
+                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-12 mb-4 border-b border-gray-700 pb-2">Computer Vision & Deep Learning</h4></div>
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <iframe src="https://www.youtube.com/embed/BQ6c5AnQHEU" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">AthleteRise (Sports Performance Analysis)</h5>
+                    <p class="text-gray-400 flex-grow text-sm">Computer Vision tool using pose estimation (Mediapipe) to analyze and provide real-time feedback on athletic form and performance. (Computer Vision)</p>
+                    <a href="https://github.com/Uvais5/AthleteRise" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <iframe src="https://www.youtube.com/embed/DF53aO3G2jQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Flexible Multi-Modal Emotion Detector</h5>
+                    <p class="text-gray-400 flex-grow text-sm">Modular classification system using Transformers and OpenCV to classify emotions from text, audio, or video inputs. Designed for high accuracy and multi-modal analysis in human-computer interaction. (Computer Vision)</p>
+                    <a href="https://github.com/Uvais5/Flexible-Emotion-Detector" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <iframe src="https://www.youtube.com/embed/1965Aa28cyQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">COVID‑19 X‑Ray Classifier (Deployed)</h5>
+                    <p class="text-gray-400 flex-grow text-sm">Transfer-learning CNN achieving 92% accuracy in detecting COVID-19 from chest X-rays. Deployed end-to-end using Streamlit, demonstrating robust medical image classification. (Computer Vision)</p>
+                    <a href="https://github.com/Uvais5/Covid-19_X_Ray_Image_Classification_end_to_end" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+                
+                
+
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center">
+                        <img src="https://raw.githubusercontent.com/Uvais5/Coverter_2d_to_180VR_Video/master/demo.gif" alt="2D to 180VR Video Conversion Demo GIF" class="max-h-full max-w-full object-contain rounded-lg">
+                    </div>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Convert 2D to 180VR Video</h5>
+                    <p class="text-gray-400 flex-grow text-sm">A Computer Vision pipeline to transform standard 2D video into an immersive 180-degree VR format suitable for VR headsets. (Computer Vision)</p>
+                    <a href="https://github.com/Uvais5/Coverter_2d_to_180VR_Video" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+
+                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-12 mb-4 border-b border-gray-700 pb-2">Machine Learning & Predictive Modeling</h4></div>
+
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <iframe src="https://www.youtube.com/embed/kZP5kroO56Q" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Anime Recommendation System</h5>
+                    <p class="text-gray-400 flex-grow text-sm">Content-based filtering system using cosine similarity on scraped metadata, providing personalized content discovery and deployed as a publicly accessible web application. (Machine Learning)</p>
+                    <a href="https://github.com/Uvais5/Anime_Recommendation_System" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <iframe src="https://www.youtube.com/embed/1_9JIDRSZOM" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Stock Price Prediction Web App (Prophet)</h5>
+                    <p class="text-gray-400 flex-grow text-sm">Time series forecasting application using the Prophet library, deployed via Streamlit to offer users interactive, real-time predictions and visualizations of financial data. (Machine Learning)</p>
+                    <a href="https://github.com/Uvais5/Stock_Price_Prediction_app" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <iframe src="https://www.youtube.com/embed/DvvVF3kVwmQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Dating Recommendation System</h5>
+                    <p class="text-gray-400 flex-grow text-sm">A hybrid recommendation model combining collaborative and content-based filtering to suggest optimal matches for users. (Machine Learning)</p>
+                    <a href="https://github.com/Uvais5/Dating_recommendation_system" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Health Insurance Prediction (End-to-End)</h5>
+                    <p class="text-gray-400 flex-grow text-sm">A regression model predicting individual health insurance charges based on demographic and health factors, developed end-to-end. (Machine Learning)</p>
+                    <a href="https://github.com/Uvais5/Health-end-to-end-project" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center text-gray-500">No Demo/Video Available</div>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Detect Behavior with Sensor Data (Time Series)</h5>
+                    <p class="text-gray-400 flex-grow text-sm">A multi-class classification model analyzing time-series sensor data to accurately detect and categorize human behaviors. (Machine Learning)</p>
+                    <a href="https://github.com/Uvais5/CMI---Detect-Behavior-with-Sensor-Data" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                </div>
+                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-12 mb-4 border-b border-gray-700 pb-2">Data Scraping</h4></div>
+                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                    <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center">
+                        <svg class="w-12 h-12 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9L16 12l-6 4.5z"/></svg>
+                    </div>
+                    <h5 class="text-xl font-bold mb-2 text-teal-300">Song Lyrics Scraper & NLP Dataset (2017–2024)</h5>
+                    <p class="text-gray-400 flex-grow text-sm">A web scraping project resulting in a comprehensive, quality-vetted NLP dataset of song lyrics from top artists, hosted on Kaggle. (Scraper/Data Engineering)</p>
+                    <a href="https://www.kaggle.com/datasets/uvaissaifi/top-artist-songs-with-lyrics-20172024/data" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View Kaggle Dataset &rarr;</a>
+                </div>
+                
+                
+                
+            </div>
+        </section>
+        
+        <section id="certifications" class="py-16">
+            <h3 class="text-4xl font-bold text-center mb-12 text-teal-400">Professional Certifications</h3>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                
+                <a href="https://www.coursera.org/account/accomplishments/verify/49UCB3J3FI3G" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
+                    <p class="text-base font-medium text-pink-400 mb-1">DeepLearning.AI & Google Cloud</p>
+                    <h4 class="text-xl font-bold text-teal-300">Generative AI with Large Language Models</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Focus: RAG, Fine-tuning, Deployment.</span>
+                </a>
+                <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15963212" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
+                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                    <h4 class="text-xl font-bold text-teal-300">Explore Generative AI with the Gemini API</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Hands-on application of Gemini for real-world tasks.</span>
+                </a>
+                <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14954330" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
+                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                    <h4 class="text-xl font-bold text-teal-300">Build Real-World AI Apps with Gemini & Imagen</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Mastering multi-modal application development.</span>
+                </a>
+                   <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dabb5cd-2e8ce0e16d00/badges/14924177" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
+                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                    <h4 class="text-xl font-bold text-teal-300">Prompt Design in Vertex AI</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Specializing in effective prompt engineering.</span>
+                </a>
+                   <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15379070" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
+                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                    <h4 class="text-xl font-bold text-teal-300">Develop GenAI App with Gemini & Streamlit</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Practical GenAI application development and deployment.</span>
+                </a>
+                <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15037547" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
+                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                    <h4 class="text-xl font-bold text-teal-300">Inspect Rich Documents with Gemini Multimodality & RAG</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Advanced RAG for multi-modal document analysis.</span>
+                </a>
+                <a href="https://www.skills.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/17433030" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
+                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                    <h4 class="text-xl font-bold text-teal-300">Natural Language Processing on Google Cloud</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Practical NLP implementation on GCP.</span>
+                </a>
+                   <a href="https://certificate.hack2skill.com/user/GenAI5-28M/2025H2S04GENAI-A01204" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
+                    <p class="text-base font-medium text-pink-400 mb-1">Hack2Skill</p>
+                    <h4 class="text-xl font-bold text-teal-300">Gen AI Academy</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Comprehensive Generative AI training.</span>
+                </a>
+                
+                <a href="https://drive.google.com/file/d/1R7Mt2Znc7W8mP4_Kdw7Qf6Vzyv4m_dY0/view" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-sky-500">
+                    <p class="text-base font-medium text-sky-400 mb-1">Private Course / Self-Paced</p>
+                    <h4 class="text-xl font-bold text-teal-300">Python with Data Science (Comprehensive)</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Core Python, Data Analysis, and ML fundamentals.</span>
+                </a>
+                <a href="https://www.udemy.com/certificate/UC-4c43ffcc-4dae-4638-bbdc-d6a780133712/" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-sky-500">
+                    <p class="text-base font-medium text-sky-400 mb-1">Udemy</p>
+                    <h4 class="text-xl font-bold text-teal-300">Data Scientist BootCamp</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Full-stack curriculum in Data Science.</span>
+                </a>
+                <a href="https://drive.google.com/drive/u/0/folders/1Ys6ooPiKuZVRYT5MRiLO5UQqVXNaD8y1" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-sky-500">
+                    <p class="text-base font-medium text-sky-400 mb-1">SuperDataScience • Udemy</p>
+                    <h4 class="text-xl font-bold text-teal-300">Machine Learning A-Z™ (Hands-On Python & R)</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">In-depth coverage of classical ML algorithms.</span>
+                </a>
+                <a href="https://www.coursera.org/account/accomplishments/verify/RVJGB5GZDKDN" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-sky-500">
+                    <p class="text-base font-medium text-sky-400 mb-1">Coursera • Duke University</p>
+                    <h4 class="text-xl font-bold text-teal-300">Managing Big Data with MySQL</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Focus on efficient data querying and management.</span>
+                </a>
+
+                <a href="https://drive.google.com/drive/u/0/folders/1Ys6ooPiKuZVRYT5MRiLO5UQqVXNaD8y1" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-amber-500">
+                    <p class="text-base font-medium text-amber-400 mb-1">Ramjas College, Delhi University</p>
+                    <h4 class="text-xl font-bold text-teal-300">Certification in Japanese Language N5</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Foundation level Japanese proficiency.</span>
+                </a>
+                <a href="https://drive.google.com/drive/u/0/folders/1Ys6ooPiKuZVRYT5MRiLO5UQqVXNaD8y1" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-amber-500">
+                    <p class="text-base font-medium text-amber-400 mb-1">St. Stephen's College, Delhi University</p>
+                    <h4 class="text-xl font-bold text-teal-300">Diploma in Japanese Language N4</h4>
+                    <span class="text-sm text-gray-400 mt-1 block">Intermediate level Japanese proficiency.</span>
+                </a>
+
+            </div>
+        </section>
+        
+        <section id="languages" class="py-16">
+            <h3 class="text-4xl font-bold text-center mb-12 text-teal-400">Language Proficiency</h3>
+            <div class="max-w-4xl mx-auto grid sm:grid-cols-3 gap-6 text-center">
+                <div class="professional-card p-6 rounded-xl shadow-lg border-b-4 border-sky-500">
+                    <p class="text-2xl font-bold text-teal-300">English</p>
+                    <p class="text-gray-400 mt-2">Native / Full Professional Proficiency</p>
+                </div>
+                <div class="professional-card p-6 rounded-xl shadow-lg border-b-4 border-sky-500">
+                    <p class="text-2xl font-bold text-teal-300">Hindi</p>
+                    <p class="text-gray-400 mt-2">Native / Full Professional Proficiency</p>
+                </div>
+                <div class="professional-card p-6 rounded-xl shadow-lg border-b-4 border-sky-500">
+                    <p class="text-2xl font-bold text-teal-300">Japanese</p>
+                    <p class="text-gray-400 mt-2">Intermediate Proficiency (N4/N5)</p>
+                </div>
+            </div>
+        </section>
+        
+        <div class="w-full h-px bg-gray-700 my-12"></div>
+
+        <section id="contact" class="py-16 text-center">
+            <h3 class="text-3xl font-bold mb-4 text-teal-400">Let's Connect and Collaborate</h3>
+            <p class="text-gray-400 mb-8 max-w-xl mx-auto">
+                Reach out for inquiries, project proposals, or discussions on the future of Generative AI and Data Science.
+            </p>
+            <div class="flex justify-center space-x-6 flex-wrap gap-y-4">
+                <a href="mailto:uvaissaifi523@gmail.com" class="inline-block px-6 py-3 border-2 border-teal-600 text-teal-400 font-semibold rounded-full hover:bg-teal-600 hover:text-white transition duration-300 transform hover:scale-[1.05]">
+                    Email: uvaissaifi523@gmail.com
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-[#1f2937] mt-12 py-6 border-t border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
+            &copy; 2025 Uvais Saifi | Data Science Portfolio. All rights reserved.
+        </div>
+    </footer>
 </body>
 </html>
