@@ -3,446 +3,1195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Uvais Saifi | Data Scientist & AI/ML Engineer</title>
+    <title>Uvais Saifi | Data Scientist & GenAI Engineer</title>
+    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Three.js Import Map for the new Morphing Animation -->
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.162.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.162.0/examples/jsm/"
+      }
+    }
+    </script>
+
+    <!-- Custom Styles and Advanced Animation Logic -->
     <style>
-        /* Custom font import for 'Inter' */
+        /* 1. Font and Base Styling */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* Even darker, GitHub-like background */
+            overflow-x: hidden;
+            background-color: #000000; /* TRUE BLACK base */
+            color: #E5E7EB; /* Lighter text for high contrast */
         }
-        /* Custom scrollbar style for subtle look */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1f2937; /* Gray-800 */ }
-        ::-webkit-scrollbar-thumb { background: #14b8a6; /* Teal-500 */ border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #0d9488; /* Teal-600 */ }
+        
+        /* 2. THREE.JS MORPHING SHAPES BACKGROUND STYLES */
+        /* This container holds the 3D scene and acts as the full-screen background */
+        #container {
+            position: fixed;
+            inset: 0;
+            z-index: 0; /* Behind the content */
+            background: #040307;
+            background-image:
+                radial-gradient(circle at 50% 35%, #1d1431 0%, transparent 65%),
+                linear-gradient(180deg, #000000 0%, #070012 100%);
+        }
+        .vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1; /* Above the canvas but below content */
+            background: radial-gradient(circle at center, rgba(0,0,0,0) 65%, rgba(0,0,0,.5) 100%);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* 3. Portfolio Content Overlay (High Z-Index) */
+        main {
+            z-index: 30; /* Ensure content is above the 3D background */
+            position: relative;
+            /* Added a slightly transparent dark background to improve text contrast over the particles */
+            background-color: rgba(0, 0, 0, 0.4); 
+            min-height: 100vh;
+        }
 
-        /* General card styling for consistency */
-        .professional-card {
-            background-color: #1f2937; /* Gray-800 */
-            transition: all 0.3s ease-in-out;
-            border: 1px solid #374151; /* Gray-700 */
+        /* 4. Interactive Mouse Spotlight (Advanced Feature 1) */
+        #spotlight-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10; 
+            background: radial-gradient(
+                circle 350px at 0% 0%,
+                rgba(0, 191, 255, 0.15) 0%,
+                rgba(0, 0, 0, 0.0) 100%
+            );
+            transition: transform 0.1s ease-out;
+            will-change: transform;
         }
-        .professional-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(20, 184, 166, 0.1); /* Subtle teal glow */
-            border-color: #14b8a6; /* Teal-500 hover border */
+
+        /* 5. Entrance Animation (Scroll Reveal) & Header */
+        .reveal-element { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1); will-change: opacity, transform; }
+        .reveal-element.is-visible { opacity: 1; transform: translateY(0); }
+        #header { transition: all 0.3s ease-in-out; border-bottom: 1px solid transparent; z-index: 50; }
+        /* *** UPDATED: Increased blur for header on scroll *** */
+        #header.scrolled { 
+            background-color: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(12px); 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); 
+            padding-top: 0.5rem; 
+            padding-bottom: 0.5rem; 
+            border-bottom: 1px solid #00bfff; 
         }
+        
+        /* 6. Card Tilt Setup */
+        .card-container { perspective: 1200px; }
+        .professional-card { background-color: #0a0a0a; transition: transform 0.2s ease-out, box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid #1f2937; transform-style: preserve-3d; }
+        .professional-card:hover { border-color: #00bfff; box-shadow: 0 15px 50px rgba(0, 191, 255, 0.4); }
+
+        /* 7. Click Ripple Effect Styles */
+        .ripple-btn { position: relative; overflow: hidden; transform: translate3d(0, 0, 0); }
+        .ripple { display: block; position: absolute; background: rgba(0, 191, 255, 0.5); border-radius: 100%; transform: scale(0); animation: ripple 0.6s linear; pointer-events: none; }
+        @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+        
+        /* 8. Morphing Animation UI Styles (Glassmorphism) */
+        .instructions {
+            position: fixed;
+            left: 24px;
+            bottom: 24px;
+            padding: 10px 20px;
+            font-size: 12px;
+            pointer-events: none;
+            color: #d0b0ff;
+            background: rgba(18, 15, 40, 0.25);
+            border: 1px solid rgba(122, 70, 255, 0.28);
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+            z-index: 30; /* High Z-Index for UI */
+            box-shadow: 0 4px 20px rgba(0,0,0,.45);
+        }
+
+        /* 9. Glassmorphism Blur for Hero Text (New style for the summary wrapper) */
+        .glass-blur-text-wrapper {
+            background-color: rgba(0, 0, 0, 0.4); /* Darker, semi-transparent base */
+            backdrop-filter: blur(6px); /* Blur for glass effect */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem; /* Added padding for visual space */
+            border-radius: 1.5rem; /* Rounded corners */
+        }
+
+        /* Custom scrollbar style */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: #00bfff; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0099cc; }
     </style>
 </head>
-<body class="text-gray-100 min-h-screen">
+<body class="min-h-screen text-gray-100">
 
-    <header class="shadow-2xl sticky top-0 bg-[#0d1117]/90 backdrop-blur-md z-20 border-b border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-extrabold text-teal-400">UVAIS SAIFI <span class="text-gray-500 font-medium text-lg">| AI/ML Engineer & Data Science</span></h1>
+    <!-- Advanced Feature 6: THREE.JS MORPHING SHAPES BACKGROUND -->
+    <div id="container"></div>
+    <div class="vignette"></div>
+    <div class="instructions hidden sm:block">Drag to explore</div>
+    <!-- END: Advanced Feature 6 -->
+
+    <!-- Interactive Mouse Spotlight (Advanced Feature 1) -->
+    <div id="spotlight-overlay"></div>
+
+    <!-- Dynamic Header -->
+    <header id="header" class="fixed top-0 left-0 right-0 z-50 py-3 transition-all">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold text-cyan-400">Uvais Saifi <span class="text-gray-500 font-medium text-lg hidden sm:inline">| GenAI & Data Science</span></h1>
             
-            <!-- Desktop Navigation -->
-            <nav class="space-x-6 hidden md:block">
-                <a href="#summary" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Summary</a>
-                <a href="#skills" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Skills</a>
-                <a href="#projects" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Projects</a>
-                <a href="#certifications" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Certifications</a>
-                <a href="#languages" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium">Languages</a>
-                <a href="#contact" class="px-3 py-1.5 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition duration-300 text-sm">Contact</a>
+            <!-- Desktop Navigation (Hidden on Mobile) -->
+            <nav class="space-x-4 hidden md:flex items-center">
+                <a href="#summary" class="text-gray-300 hover:text-cyan-400 transition duration-300 font-medium ripple-btn">Summary</a>
+                <a href="#skills" class="text-gray-300 hover:text-cyan-400 transition duration-300 font-medium ripple-btn">Skills</a>
+                <a href="#projects" class="text-gray-300 hover:text-cyan-400 transition duration-300 font-medium ripple-btn">Projects</a>
+                <a href="#certifications" class="text-gray-300 hover:text-cyan-400 transition duration-300 font-medium ripple-btn">Certifications</a>
+                <!-- The Contact button now fits better with reduced spacing -->
+                <a href="#contact" class="px-3 py-1.5 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 transition duration-300 text-sm shadow-md ripple-btn">Contact</a>
             </nav>
-            
-            <!-- Mobile Menu Button -->
-            <button id="mobile-menu-button" class="md:hidden text-gray-300 hover:text-teal-400 focus:outline-none">
-                <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+
+            <!-- Mobile Menu Button (Visible on Mobile) -->
+            <button id="menu-button" class="md:hidden text-gray-300 hover:text-cyan-400 p-2 rounded-lg transition duration-300 focus:outline-none">
+                <!-- Hamburger Icon -->
+                <svg id="menu-icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                <!-- Close Icon (Hidden by default) -->
+                <svg id="menu-icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
         </div>
+
+        <!-- Mobile Menu Content (Hidden by default) -->
+        <div id="mobile-menu" class="hidden md:hidden pt-4 pb-2 bg-black bg-opacity-95 backdrop-blur-sm border-t border-gray-800">
+            <div class="flex flex-col space-y-3 px-4 sm:px-6">
+                <a href="#summary" class="text-gray-300 hover:text-cyan-400 transition duration-300 font-medium ripple-btn block py-2" data-mobile-link>Summary</a>
+                <a href="#skills" class="text-gray-300 hover:text-cyan-400 transition duration-300 font-medium ripple-btn block py-2" data-mobile-link>Skills</a>
+                <a href="#projects" class="text-gray-300 hover:text-cyan-400 transition duration-300 font-medium ripple-btn block py-2" data-mobile-link>Projects</a>
+                <a href="#certifications" class="text-gray-300 hover:text-cyan-400 transition duration-300 font-medium ripple-btn block py-2" data-mobile-link>Certifications</a>
+                <a href="#contact" class="px-3 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-500 transition duration-300 text-sm shadow-md ripple-btn text-center mt-3" data-mobile-link>Contact</a>
+            </div>
+        </div>
     </header>
-    
-    <!-- Mobile Menu Overlay -->
-    <nav id="mobile-menu" class="fixed top-[68px] left-0 w-full bg-[#0d1117]/95 border-t border-gray-700 shadow-xl p-6 hidden md:hidden z-30">
-        <div class="flex flex-col space-y-4 text-center">
-            <a href="#summary" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium border-b border-gray-800 pb-2">Summary</a>
-            <a href="#skills" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium border-b border-gray-800 pb-2">Skills</a>
-            <a href="#projects" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium border-b border-gray-800 pb-2">Projects</a>
-            <a href="#certifications" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium border-b border-gray-800 pb-2">Certifications</a>
-            <a href="#languages" class="text-gray-300 hover:text-teal-400 transition duration-300 font-medium border-b border-gray-800 pb-2">Languages</a>
-            <a href="#contact" class="px-3 py-2 mt-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition duration-300 text-sm font-medium">Contact</a>
-        </div>
-    </nav>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
-        <section id="summary" class="text-center py-10 md:py-16">
-            <img class="w-40 h-40 rounded-full mx-auto mb-6 border-4 border-teal-500 shadow-2xl object-cover" 
-                src="https://raw.githubusercontent.com/Uvais5/uvais5.github.io/master/profile.png" 
-                alt="Uvais Saifi professional profile image"
-                onerror="this.onerror=null;this.src='https://placehold.co/160x160/1f2937/d1d5db?text=Profile';">
-            
-            <p class="text-lg font-semibold uppercase tracking-widest text-teal-400 mb-2">Uvais Saifi</p>
-
-            <h2 class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight text-gray-50 bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-sky-400">
-                Data Scientist | AI/ML Engineer
-            </h2>
-            <p class="text-xl text-gray-300 max-w-5xl mx-auto mb-10">
-                Certified in Generative AI and Machine Learning, specializing in the design and deployment of end-to-end solutions. Expertise includes building complex RAG systems, developing multi-modal classification models (NLP/CV), and leveraging cutting-edge tools like Gemini API and Imagen to create scalable, intelligent applications.
-            </p>
-            
-            <div class="flex justify-center space-x-4 flex-wrap gap-y-3">
-                <!-- FIX APPLIED: Changed href to the raw content link for guaranteed download -->
-                <a href="https://raw.githubusercontent.com/Uvais5/uvais5.github.io/master/Uvais-Saifi-AI.pdf" download class="flex items-center space-x-2 px-6 py-3 bg-gray-700 text-teal-400 font-semibold rounded-xl shadow-xl hover:bg-gray-600 transition duration-300 transform hover:scale-[1.02]">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L10 12.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                        <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v9a1 1 0 11-2 0V3a1 1 0 011-1z" clip-rule="evenodd"/>
-                    </svg>
-                    <span>Download Full CV</span
-                </a>
-                <a href="https://www.linkedin.com/in/uvais-saifi-187150236/" target="_blank" class="flex items-center space-x-2 px-6 py-3 bg-teal-600 text-white font-semibold rounded-xl shadow-xl hover:bg-teal-500 transition duration-300 transform hover:scale-[1.02]">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.5 22H3.5a1.5 1.5 0 01-1.5-1.5V3.5A1.5 1.5 0 013.5 2h17a1.5 1.5 0 011.5 1.5v17a1.5 1.5 0 01-1.5 1.5zM8 8a2 2 0 100-4 2 2 0 000 4zm-1 12v-9h2v9H7zm11 0h-2v-5c0-1.25-.75-1.75-1.75-1.75S13.5 13 13.5 14v6h-2v-9h2v.75c.67-1.23 2.05-1.75 3.12-1.75 2.15 0 3.38 1.45 3.38 3.5V20z"/></svg>
-                    <span>LinkedIn Profile</span>
-                </a>
-                <a href="https://github.com/Uvais5" target="_blank" class="flex items-center space-x-2 px-6 py-3 bg-gray-700 text-teal-400 font-semibold rounded-xl shadow-xl hover:bg-gray-600 transition duration-300 transform hover:scale-[1.02]">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.43 9.8 8.21 11.38.6.11.82-.26.82-.57 0-.28-.01-1.02-.02-2.01-3.34.73-4.04-1.61-4.04-1.61-.55-1.4-1.34-1.77-1.34-1.77-1.09-.75.08-.74.08-.74 1.21.08 1.85 1.24 1.85 1.24 1.07 1.84 2.81 1.31 3.49 1 .11-.77.42-1.31.76-1.61-2.67-.3-5.49-1.34-5.49-5.95 0-1.32.47-2.39 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23.95-.26 1.95-.39 2.95-.39s2.01.13 2.96.39c2.3-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.83 1.24 1.9 1.24 3.22 0 4.62-2.83 5.64-5.5 5.94.43.37.82 1.12.82 2.25 0 1.62-.01 2.93-.01 3.33 0 .31.22.68.83.57A12 12 0 0024 12C24 5.37 18.63 0 12 0z"/></svg>
-                    <span>GitHub Repos</span>
-                </a>
-            </div>
-        </section>
-
-        <div class="grid lg:grid-cols-3 gap-8 my-16">
-            
-            <div class="lg:col-span-1">
-                <h3 class="text-3xl font-bold text-teal-400 mb-6 border-b border-teal-700/50 pb-2">Education</h3>
-                <div class="professional-card p-6 rounded-xl shadow-lg border-l-4 border-teal-600">
-                    <h4 class="text-xl font-semibold text-teal-300">Bachelor of Computer Applications (BCA)</h4>
-                    <p class="text-gray-400 mt-1">Indira Gandhi National Open University (IGNOU)</p>
-                    <p class="text-gray-500 text-sm">Delhi, India</p>
-                </div>
-            </div>
-
-            <div id="skills" class="lg:col-span-2">
-                <h3 class="text-3xl font-bold text-teal-400 mb-6 border-b border-teal-700/50 pb-2">Core Technical Skills</h3>
-                <div class="professional-card p-6 rounded-xl shadow-lg">
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-                        <div>
-                            <p class="text-lg font-semibold text-sky-400 mb-2">Generative AI & NLP</p>
-                            <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
-                                <li>Gemini API (Multi-modal, RAG) \& Imagen</li>
-                                <li>RAG, Fine-tuning \& Prompt Engineering</li>
-                                <li>Transformers \& Attention Mechanisms</li>
-                                <!-- Typo fix applied here -->
-                                <li>Hugging Face, sentence transformers</li>
-                                <li>word2vec, TF-IDF, NLTK, spaCy</li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <p class="text-lg font-semibold text-sky-400 mb-2">Machine Learning & Modeling</p>
-                            <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
-                                <li>Python (Pandas, NumPy, Scikit-learn)</li>
-                                <li>PyTorch, TensorFlow/Keras,ANN,CNN,RNN</li>
-                                <li>XGBoost, LightGBM</li>
-                                <li>Text Classification</li>
-                                <li>Recommendation Systems,EDA,Matplotlib</li>
-                                <li>Sentiment Analysis</li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <p class="text-lg font-semibold text-sky-400 mb-2">Computer Vision & Data</p>
-                            <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm">
-                                <li>YOLO, OpenPose</li>
-                                <li>OpenCV, Mediapipe</li>
-                                <li>Data Scraping, Beautiful Soup</li>
-                                <li>JSON Parsing</li>
-                            </ul>
-                        </div>
-
-                        <div class="md:col-span-2 lg:col-span-3">
-                            <p class="text-lg font-semibold text-sky-400 mb-2">Deployment, Cloud \& Web Fundamentals</p>
-                            <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm flex flex-wrap gap-x-8">
-                                <li>Deployment: Streamlit, Gradio, Flask, Kivy</li>
-                                <li>Web: HTML, CSS, JavaScript (JS)</li>
-                                <li>Cloud/DB:AWS, GCP Fundamentals, SQL (MySQL, PostgreSQL),vertexAI</li>
-                                <li>Version Control: Git/GitHub</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="w-full h-px bg-gray-700 my-12"></div>
-
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         
-
-        
-
-        <section id="projects" class="py-16">
-            <h3 class="text-4xl font-bold text-center mb-12 text-teal-400">Featured AI & Data Projects</h3>
-            
-            <div class="grid md:grid-cols-2 gap-8">
+        <!-- Hero/Summary Section (Parallax Target - Advanced Feature 3) -->
+        <section id="summary" class="min-h-[90vh] flex items-center justify-center pt-24 pb-12 text-center relative overflow-hidden">
+            <div id="hero-content" class="max-w-5xl mx-auto z-20">
+                <!-- Profile Image: Parallax Speed 1.5 -->
+                <img id="parallax-img" class="w-40 h-40 rounded-full mx-auto mb-6 border-4 border-cyan-500 shadow-2xl object-cover reveal-element" 
+                    src="https://raw.githubusercontent.com/Uvais5/uvais5.github.io/master/profile.png" 
+                    alt="Uvais Saifi professional profile image"
+                    onerror="this.onerror=null;this.src='https://placehold.co/160x160/0a0a0a/00bfff?text=Uvais';">
                 
-                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-6 mb-4 border-b border-gray-700 pb-2">Generative AI & RAG Applications</h4></div>
-
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <iframe src="https://www.youtube.com/embed/wlqpN3FJWkk" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Mental Health AI App (Prototype)</h5>
-                    <p class="text-gray-400 flex-grow text-sm">Working RAG prototype utilizing the Gemini API and Imagen for enhanced mental health support. Focuses on contextual guidance and empathetic multi-modal response generation. (NLP and AI)</p>
-                    <a href="https://github.com/Uvais5/Mental-Health-AI-App" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <iframe src="https://www.youtube.com/embed/ojCkCD_KkBM" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">RAG-based NLP Query Engine (Employee Data)</h5>
-                    <p class="text-gray-400 flex-grow text-sm">RAG system enabling employees to query structured data (CSV/Excel) using natural language. Transforms complex data analysis into simple conversational inputs, leveraging LLMs for semantic understanding. (NLP and AI)</p>
-                    <a href="https://github.com/Uvais5/NLP-Query-Engine-for-Employee-Data" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                <!-- Text Content: Parallax Speed 1.1 -->
+                <h2 id="parallax-text-h2" class="text-5xl md:text-7xl font-extrabold mb-4 leading-tight text-white reveal-element" style="transition-delay: 0.1s;">
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400">AI/ML Engineer</span> & Data Scientist
+                </h2>
+                
+                <!-- Summary Paragraph Wrapper with Blur (New Element) -->
+                <div id="parallax-text-p-wrapper" class="glass-blur-text-wrapper max-w-4xl mx-auto mb-10 reveal-element" style="transition-delay: 0.2s;">
+                    <p class="text-xl text-gray-300">
+                        Certified in Generative AI and Machine Learning, specializing in the design and deployment of end-to-end solutions. Expertise includes building complex RAG systems, developing multi-modal classification models (NLP/CV), and leveraging cutting-edge tools like Gemini API and Imagen to create scalable, intelligent applications.
+                    </p>
                 </div>
                 
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <iframe src="https://www.youtube.com/embed/kc3UOvSVldE" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Dual Chatbot System – Personal Assistant & Data Expert</h5>
-                    <p class="text-gray-400 flex-grow text-sm">A sophisticated system integrating two specialized chatbots for versatile conversational AI and data-driven insights. (NLP and AI)</p>
-                    <a href="https://github.com/Uvais5/chatbot" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center text-gray-500">No Demo/Video Available</div>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Hate Speech Detection (NLP Model)</h5>
-                    <p class="text-gray-400 flex-grow text-sm">Deep learning model for real-time detection and classification of offensive or hateful language in text data. (NLP and AI)</p>
-                    <a href="https://github.com/Uvais5/Hate_Speech_Detection_end_to_end" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-
-                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-12 mb-4 border-b border-gray-700 pb-2">Computer Vision & Deep Learning</h4></div>
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <iframe src="https://www.youtube.com/embed/BQ6c5AnQHEU" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">AthleteRise (Sports Performance Analysis)</h5>
-                    <p class="text-gray-400 flex-grow text-sm">Computer Vision tool using pose estimation (Mediapipe) to analyze and provide real-time feedback on athletic form and performance. (Computer Vision)</p>
-                    <a href="https://github.com/Uvais5/AthleteRise" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <iframe src="https://www.youtube.com/embed/DF53aO3G2jQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Flexible Multi-Modal Emotion Detector</h5>
-                    <p class="text-gray-400 flex-grow text-sm">Modular classification system using Transformers and OpenCV to classify emotions from text, audio, or video inputs. Designed for high accuracy and multi-modal analysis in human-computer interaction. (Computer Vision)</p>
-                    <a href="https://github.com/Uvais5/Flexible-Emotion-Detector" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <iframe src="https://www.youtube.com/embed/1965Aa28cyQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">COVID‑19 X‑Ray Classifier (Deployed)</h5>
-                    <p class="text-gray-400 flex-grow text-sm">Transfer-learning CNN achieving 92% accuracy in detecting COVID-19 from chest X-rays. Deployed end-to-end using Streamlit, demonstrating robust medical image classification. (Computer Vision)</p>
-                    <a href="https://github.com/Uvais5/Covid-19_X_Ray_Image_Classification_end_to_end" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-                
-                
-
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center">
-                        <img src="https://raw.githubusercontent.com/Uvais5/Coverter_2d_to_180VR_Video/master/demo.gif" alt="2D to 180VR Video Conversion Demo GIF" class="max-h-full max-w-full object-contain rounded-lg">
-                    </div>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Convert 2D to 180VR Video</h5>
-                    <p class="text-gray-400 flex-grow text-sm">A Computer Vision pipeline to transform standard 2D video into an immersive 180-degree VR format suitable for VR headsets. (Computer Vision)</p>
-                    <a href="https://github.com/Uvais5/Coverter_2d_to_180VR_Video" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-
-                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-12 mb-4 border-b border-gray-700 pb-2">Machine Learning & Predictive Modeling</h4></div>
-
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <iframe src="https://www.youtube.com/embed/kZP5kroO56Q" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Anime Recommendation System</h5>
-                    <p class="text-gray-400 flex-grow text-sm">Content-based filtering system using cosine similarity on scraped metadata, providing personalized content discovery and deployed as a publicly accessible web application. (Machine Learning)</p>
-                    <a href="https://github.com/Uvais5/Anime_Recommendation_System" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <iframe src="https://www.youtube.com/embed/1_9JIDRSZOM" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Stock Price Prediction Web App (Prophet)</h5>
-                    <p class="text-gray-400 flex-grow text-sm">Time series forecasting application using the Prophet library, deployed via Streamlit to offer users interactive, real-time predictions and visualizations of financial data. (Machine Learning)</p>
-                    <a href="https://github.com/Uvais5/Stock_Price_Prediction_app" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <iframe src="https://www.youtube.com/embed/DvvVF3kVwmQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Dating Recommendation System</h5>
-                    <p class="text-gray-400 flex-grow text-sm">A hybrid recommendation model combining collaborative and content-based filtering to suggest optimal matches for users. (Machine Learning)</p>
-                    <a href="https://github.com/Uvais5/Dating_recommendation_system" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
+                <!-- START: BUTTON GROUP WITH NEW MORPH BUTTON -->
+                <div class="flex justify-center space-x-4 flex-wrap gap-y-3 reveal-element" style="transition-delay: 0.3s;">
                     
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Health Insurance Prediction (End-to-End)</h5>
-                    <p class="text-gray-400 flex-grow text-sm">A regression model predicting individual health insurance charges based on demographic and health factors, developed end-to-end. (Machine Learning)</p>
-                    <a href="https://github.com/Uvais5/Health-end-to-end-project" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
+                    <!-- 1. Download CV Button -->
+                    <a href="https://raw.githubusercontent.com/Uvais5/uvais5.github.io/master/Uvais-Saifi-AI.pdf" download class="flex items-center space-x-2 px-6 py-3 bg-gray-800 text-cyan-400 font-semibold rounded-xl shadow-xl hover:bg-gray-700 transition duration-300 transform hover:scale-[1.05] ripple-btn">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L10 12.586l2.293-2.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M10 2a1 1 0 011 1v9a1 1 0 11-2 0V3a1 1 0 011-1z" clip-rule="evenodd"/></svg>
+                        <span>Download CV</span>
+                    </a>
+                    
+                    <!-- 2. LinkedIn Button -->
+                    <a href="https://www.linkedin.com/in/uvais-saifi-187150236/" target="_blank" class="flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white font-semibold rounded-xl shadow-xl hover:bg-blue-500 transition duration-300 transform hover:scale-[1.05] ripple-btn">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M20.5 22H3.5a1.5 1.5 0 01-1.5-1.5V3.5A1.5 1.5 0 013.5 2h17a1.5 1.5 0 011.5 1.5v17a1.5 1.5 0 01-1.5 1.5zM8 8a2 2 0 100-4 2 2 0 000 4zm-1 12v-9h2v9H7zm11 0h-2v-5c0-1.25-.75-1.75-1.75-1.75S13.5 13 13.5 14v6h-2v-9h2v.75c.67-1.23 2.05-1.75 3.12-1.75 2.15 0 3.38 1.45 3.38 3.5V20z"/></svg>
+                        <span>LinkedIn</span>
+                    </a>
+                    
+                    <!-- 3. Morph Shape Button (New Placement) -->
+                    <button id="morphButton" class="flex items-center space-x-2 px-6 py-3 bg-pink-700 text-white font-semibold rounded-xl shadow-xl hover:bg-pink-600 transition duration-300 transform hover:scale-[1.05] ripple-btn">
+                        <!-- Simple SVG icon for morphing/changing state -->
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 16H9v-2h2v2zm0-4H9V6h2v8zm5-4h-2V6h2v8zm0 2h-2v2h2v-2z"/></svg>
+                        <span>Morph Shape</span>
+                    </button>
+                    
                 </div>
+                <!-- END: BUTTON GROUP WITH NEW MORPH BUTTON -->
+            </div>
+        </section>
 
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center text-gray-500">No Demo/Video Available</div>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Detect Behavior with Sensor Data (Time Series)</h5>
-                    <p class="text-gray-400 flex-grow text-sm">A multi-class classification model analyzing time-series sensor data to accurately detect and categorize human behaviors. (Machine Learning)</p>
-                    <a href="https://github.com/Uvais5/CMI---Detect-Behavior-with-Sensor-Data" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View GitHub &rarr;</a>
-                </div>
-                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-12 mb-4 border-b border-gray-700 pb-2">Data Scraping</h4></div>
-                <div class="professional-card p-6 rounded-xl shadow-lg flex flex-col">
-                    <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center">
-                        <svg class="w-12 h-12 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9L16 12l-6 4.5z"/></svg>
+        <div class="w-full h-px bg-gray-800 my-12 reveal-element"></div>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-16">
+            <h3 class="text-4xl font-bold text-center mb-12 text-cyan-400 reveal-element">Core Technical Skills</h3>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Skill Card 1: Generative AI -->
+                <div class="card-container reveal-element" style="transition-delay: 0.1s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl border-t-4 border-blue-500">
+                        <h4 class="text-2xl font-bold text-blue-400 mb-3">GenAI & NLP</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm ml-4">
+                            <li>Gemini API (Multi-modal, RAG) \& Imagen</li>
+                            <li>RAG, Fine-tuning \& Prompt Engineering</li>
+                            <li>Transformers, Attention Mechanisms</li>
+                            <li>Hugging Face, sentence transformers</li>
+                            <li>word2vec, TF-IDF, NLTK, spaCy</li>
+                        </ul>
                     </div>
-                    <h5 class="text-xl font-bold mb-2 text-teal-300">Song Lyrics Scraper & NLP Dataset (2017–2024)</h5>
-                    <p class="text-gray-400 flex-grow text-sm">A web scraping project resulting in a comprehensive, quality-vetted NLP dataset of song lyrics from top artists, hosted on Kaggle. (Scraper/Data Engineering)</p>
-                    <a href="https://www.kaggle.com/datasets/uvaissaifi/top-artist-songs-with-lyrics-20172024/data" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300">View Kaggle Dataset &rarr;</a>
+                </div>
+
+                <!-- Skill Card 2: ML/Modeling -->
+                <div class="card-container reveal-element" style="transition-delay: 0.2s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl border-t-4 border-blue-500">
+                        <h4 class="text-2xl font-bold text-blue-400 mb-3">Machine Learning</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm ml-4">
+                            <li>Python (Pandas, NumPy, Scikit-learn)</li>
+                            <li>PyTorch, TensorFlow/Keras, CNN, RNN</li>
+                            <li>XGBoost, LightGBM, Time Series</li>
+                            <li>Recommendation Systems, EDA</li>
+                            <li>Sentiment Analysis, Classification</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Skill Card 3: CV/Deployment -->
+                <div class="card-container reveal-element" style="transition-delay: 0.3s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl border-t-4 border-blue-500">
+                        <h4 class="text-2xl font-bold text-blue-400 mb-3">CV & Deployment</h4>
+                        <ul class="list-disc list-inside space-y-1 text-gray-300 text-sm ml-4">
+                            <li>YOLO, OpenPose, OpenCV, Mediapipe</li>
+                            <li>Deployment: Streamlit, Gradio, Flask, Kivy</li>
+                            <li>Data Scraping, Beautiful Soup, JSON Parsing</li>
+                            <li>Cloud/DB: AWS, GCP Fundamentals, SQL, Git</li>
+                        </ul>
+                    </div>
                 </div>
                 
-                
-                
+                <!-- Skill Card 4: Education/Languages -->
+                <div class="card-container reveal-element" style="transition-delay: 0.4s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl border-t-4 border-blue-500">
+                        <h4 class="text-2xl font-bold text-blue-400 mb-3">Education & Languages</h4>
+                        <p class="text-lg font-semibold text-cyan-300 mt-4">Education</p>
+                        <p class="text-gray-400 text-sm">Bachelor of Computer Applications (BCA)</p>
+                        <p class="text-gray-500 text-xs">IGNOU, Delhi, India</p>
+                        
+                        <p class="text-lg font-semibold text-cyan-300 mt-4">Languages</p>
+                        <ul class="list-disc list-inside space-y-1 text-gray-400 text-sm ml-4">
+                            <li>English (Professional)</li>
+                            <li>Hindi (Native)</li>
+                            <li>Japanese (Intermediate - N4/N5)</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </section>
-        
-        <section id="certifications" class="py-16">
-            <h3 class="text-4xl font-bold text-center mb-12 text-teal-400">Professional Certifications</h3>
+
+        <div class="w-full h-px bg-gray-800 my-16 reveal-element"></div>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-16">
+            <h3 class="text-4xl font-bold text-center mb-16 text-cyan-400 reveal-element">Featured AI & Data Projects</h3>
             
-            <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div class="grid md:grid-cols-2 gap-10">
                 
-                <a href="https://www.coursera.org/account/accomplishments/verify/49UCB3J3FI3G" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
-                    <p class="text-base font-medium text-pink-400 mb-1">DeepLearning.AI & Google Cloud</p>
-                    <h4 class="text-xl font-bold text-teal-300">Generative AI with Large Language Models</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Focus: RAG, Fine-tuning, Deployment.</span>
-                </a>
-                <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15963212" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
-                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
-                    <h4 class="text-xl font-bold text-teal-300">Explore Generative AI with the Gemini API</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Hands-on application of Gemini for real-world tasks.</span>
-                </a>
-                <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14954330" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
-                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
-                    <h4 class="text-xl font-bold text-teal-300">Build Real-World AI Apps with Gemini & Imagen</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Mastering multi-modal application development.</span>
-                </a>
-                   <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dabb5cd-2e8ce0e16d00/badges/14924177" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
-                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
-                    <h4 class="text-xl font-bold text-teal-300">Prompt Design in Vertex AI</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Specializing in effective prompt engineering.</span>
-                </a>
-                   <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15379070" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
-                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
-                    <h4 class="text-xl font-bold text-teal-300">Develop GenAI App with Gemini & Streamlit</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Practical GenAI application development and deployment.</span>
-                </a>
-                <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15037547" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
-                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
-                    <h4 class="text-xl font-bold text-teal-300">Inspect Rich Documents with Gemini Multimodality & RAG</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Advanced RAG for multi-modal document analysis.</span>
-                </a>
-                <a href="https://www.skills.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/17433030" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
-                    <p class="text-base font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
-                    <h4 class="text-xl font-bold text-teal-300">Natural Language Processing on Google Cloud</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Practical NLP implementation on GCP.</span>
-                </a>
-                   <a href="https://certificate.hack2skill.com/user/GenAI5-28M/2025H2S04GENAI-A01204" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-pink-500">
-                    <p class="text-base font-medium text-pink-400 mb-1">Hack2Skill</p>
-                    <h4 class="text-xl font-bold text-teal-300">Gen AI Academy</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Comprehensive Generative AI training.</span>
-                </a>
-                
-                <a href="https://drive.google.com/file/d/1R7Mt2Znc7W8mP4_Kdw7Qf6Vzyv4m_dY0/view" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-sky-500">
-                    <p class="text-base font-medium text-sky-400 mb-1">Private Course / Self-Paced</p>
-                    <h4 class="text-xl font-bold text-teal-300">Python with Data Science (Comprehensive)</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Core Python, Data Analysis, and ML fundamentals.</span>
-                </a>
-                <a href="https://www.udemy.com/certificate/UC-4c43ffcc-4dae-4638-bbdc-d6a780133712/" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-sky-500">
-                    <p class="text-base font-medium text-sky-400 mb-1">Udemy</p>
-                    <h4 class="text-xl font-bold text-teal-300">Data Scientist BootCamp</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Full-stack curriculum in Data Science.</span>
-                </a>
-                <a href="https://drive.google.com/drive/u/0/folders/1Ys6ooPiKuZVRYT5MRiLO5UQqVXNaD8y1" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-sky-500">
-                    <p class="text-base font-medium text-sky-400 mb-1">SuperDataScience • Udemy</p>
-                    <h4 class="text-xl font-bold text-teal-300">Machine Learning A-Z™ (Hands-On Python & R)</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">In-depth coverage of classical ML algorithms.</span>
-                </a>
-                <a href="https://www.coursera.org/account/accomplishments/verify/RVJGB5GZDKDN" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-sky-500">
-                    <p class="text-base font-medium text-sky-400 mb-1">Coursera • Duke University</p>
-                    <h4 class="text-xl font-bold text-teal-300">Managing Big Data with MySQL</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Focus on efficient data querying and management.</span>
-                </a>
+                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-6 mb-4 border-b border-gray-800 pb-2 reveal-element">Generative AI & RAG Applications</h4></div>
 
-                <a href="https://drive.google.com/drive/u/0/folders/1Ys6ooPiKuZVRYT5MRiLO5UQqVXNaD8y1" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-amber-500">
-                    <p class="text-base font-medium text-amber-400 mb-1">Ramjas College, Delhi University</p>
-                    <h4 class="text-xl font-bold text-teal-300">Certification in Japanese Language N5</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Foundation level Japanese proficiency.</span>
-                </a>
-                <a href="https://drive.google.com/drive/u/0/folders/1Ys6ooPiKuZVRYT5MRiLO5UQqVXNaD8y1" target="_blank" class="professional-card p-5 rounded-xl shadow-xl border-l-4 border-amber-500">
-                    <p class="text-base font-medium text-amber-400 mb-1">St. Stephen's College, Delhi University</p>
-                    <h4 class="text-xl font-bold text-teal-300">Diploma in Japanese Language N4</h4>
-                    <span class="text-sm text-gray-400 mt-1 block">Intermediate level Japanese proficiency.</span>
-                </a>
+                <!-- Project 1: Mental Health AI App -->
+                <div class="card-container reveal-element" style="transition-delay: 0.1s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/wlqpN3FJWkk" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Mental Health AI App (Prototype)</h5>
+                        <p class="text-gray-400 flex-grow text-sm">Working RAG prototype utilizing the Gemini API and Imagen for enhanced mental health support. Focuses on contextual guidance and empathetic multi-modal response generation. (NLP and AI)</p>
+                        <a href="https://github.com/Uvais5/Mental-Health-AI-App" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 2: RAG-based NLP Query Engine -->
+                <div class="card-container reveal-element" style="transition-delay: 0.2s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/ojCkCD_KkBM" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">RAG-based NLP Query Engine (Employee Data)</h5>
+                        <p class="text-gray-400 flex-grow text-sm">RAG system enabling employees to query structured data (CSV/Excel) using natural language. Leverages LLMs for semantic understanding and conversational inputs. (NLP and AI)</p>
+                        <a href="https://github.com/Uvais5/NLP-Query-Engine-for-Employee-Data" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+                <div class="card-container reveal-element" style="transition-delay: 0.2s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/PSHRHqCNWRQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300"> Iron Lady Chatbot</h5>
+                        <p class="text-gray-400 flex-grow text-sm">A Streamlit-based chatbot that answers questions about the Iron Lady organization using Google Generative AI (Gemini) embeddings and RAG (Retrieval-Augmented Generation). The chatbot retrieves relevant information from a predefined knowledge base and generates responses based only on that context.</p>
+                        <a href="https://github.com/Uvais5/Iron_lady_chatbot" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+                <div class="card-container reveal-element" style="transition-delay: 0.2s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/kc3UOvSVldE" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Dual Chatbot System Personal Assistant & Data Expert</h5>
+                        <p class="text-gray-400 flex-grow text-sm">A dual chatbot system built with Python, NLTK, TensorFlow/Keras, and a lightweight HTML+CSS+JavaScript front-end, designed to answer both personal and data‑science questions. The bots are trained on custom JSON intent files and are live on Heroku for instant access.
+
+</p>
+                        <a href="https://github.com/Uvais5/chatbot" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+                <div class="card-container reveal-element" style="transition-delay: 0.1s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/5089ZueJhzM" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Iron lady Simple App with AI Features</h5>
+                        <p class="text-gray-400 flex-grow text-sm">
+                            Iron Lady Simple App is an intuitive, AI-powered productivity tool built as a full-stack web application. It combines task management, course tracking, and feedback collection into a single, streamlined platform — all while leveraging generative AI to make suggestions, summarize user input, and help you stay organized.
+                        </p>
+                        <a href="https://github.com/Uvais5/Iron_lady_Simple_App" target="_blank" 
+                        class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">
+                        View GitHub &rarr;
+                        </a>
+                    </div>
+                </div>
+                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-12 mb-4 border-b border-gray-800 pb-2 reveal-element">Computer Vision & Deep Learning</h4></div>
+
+                <!-- Project 3: AthleteRise -->
+                <div class="card-container reveal-element" style="transition-delay: 0.3s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/BQ6c5AnQHEU" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">AthleteRise (Sports Performance Analysis)</h5>
+                        <p class="text-gray-400 flex-grow text-sm">Computer Vision tool using pose estimation (**Mediapipe**) to analyze and provide real-time feedback on athletic form and performance. (Computer Vision)</p>
+                        <a href="https://github.com/Uvais5/AthleteRise" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+                <div class="card-container reveal-element" style="transition-delay: 0.3s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/DF53aO3G2jQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Flexible Multi-Modal Emotion Detector</h5>
+                        <p class="text-gray-400 flex-grow text-sm">Modular classification system using Transformers and OpenCV to classify emotions from text, audio, or video inputs. Designed for high accuracy and multi-modal analysis in human-computer interaction. (Computer Vision)</p>
+                        <a href="https://github.com/Uvais5/Flexible-Emotion-Detector" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+                <div class="card-container reveal-element" style="transition-delay: 0.3s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center">
+                        <img src="https://raw.githubusercontent.com/Uvais5/Coverter_2d_to_180VR_Video/master/demo.gif" alt="2D to 180VR Video Conversion Demo GIF" class="max-h-full max-w-full object-contain rounded-lg">
+                        </div>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Convert 2D to 180VR Video</h5>
+                        <p class="text-gray-400 flex-grow text-sm">This project provides a pipeline to convert standard videos into VR180 SBS (Side-by-Side) format using MiDaS models (DPT_Large, DPT_Hybrid)  for immersive VR experiences.It uses Gradio for a simple web interface and supports GPU acceleration (CUDA).</p>
+                        <a href="https://github.com/Uvais5/Coverter_2d_to_180VR_Video" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 4: COVID‑19 X‑Ray Classifier -->
+                <div class="card-container reveal-element" style="transition-delay: 0.4s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/1965Aa28cyQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">COVID‑19 X‑Ray Classifier (Deployed)</h5>
+                        <p class="text-gray-400 flex-grow text-sm">This project provides an end-to-end solution for classifying COVID-19 from chest X-ray images using a Convolutional Neural Network (CNN) model. It includes a trained deep learning model and a user-friendly Streamlit web application for easy deployment and real-time predictions.</p>
+                        <a href="https://github.com/Uvais5/Covid-19_X_Ray_Image_Classification_end_to_end" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+                <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-12 mb-4 border-b border-gray-800 pb-2 reveal-element">Recommendation & Machine Learning & Predictive Modeling</h4></div>
+                <!-- Project 5: Anime Recommendation System -->
+                <div class="card-container reveal-element" style="transition-delay: 0.5s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/kZP5kroO56Q" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Anime Recommendation System</h5>
+                        <p class="text-gray-400 flex-grow text-sm">This project implements an end-to-end Anime Recommendation System, leveraging machine learning to provide users with personalized anime suggestions. By analyzing anime genres, descriptions, and user ratings, the system employs Cosine Similarity and Natural Language Processing (NLP) techniques to deliver accurate and relevant recommendations.</p>
+                        <a href="https://github.com/Uvais5/Anime_Recommendation_System" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+
+                <!-- Project 6: Stock Price Prediction -->
+                <div class="card-container reveal-element" style="transition-delay: 0.6s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/1_9JIDRSZOM" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Stock Price Prediction Web App (Prophet)</h5>
+                        <p class="text-gray-400 flex-grow text-sm">Time series forecasting application using the **Prophet library**, deployed via Streamlit to offer interactive predictions. (Machine Learning)</p>
+                        <a href="https://github.com/Uvais5/Stock_Price_Prediction_app" target="_blank" class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">View GitHub &rarr;</a>
+                    </div>
+                </div>
+                <div class="card-container reveal-element" style="transition-delay: 0.1s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <iframe src="https://www.youtube.com/embed/DvvVF3kVwmQ" frameborder="0" allowfullscreen class="w-full aspect-video rounded-lg mb-4 shadow-inner shadow-gray-900"></iframe>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Dating Recommendation System</h5>
+                        <p class="text-gray-400 flex-grow text-sm">
+                            A hybrid recommendation model combining collaborative and content-based filtering 
+                            to suggest optimal matches for users. (Machine Learning)
+                        </p>
+                        <a href="https://github.com/Uvais5/Dating_recommendation_system" target="_blank" 
+                        class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">
+                        View GitHub &rarr;
+                        </a>
+                    </div>
+                </div>
+                <div class="card-container reveal-element" style="transition-delay: 0.3s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Health Insurance Prediction (End-to-End)</h5>
+                        <p class="text-gray-400 flex-grow text-sm">
+                            A regression model predicting individual health insurance charges based on demographic 
+                            and health factors, developed end-to-end. (Machine Learning)
+                        </p>
+                        <a href="https://github.com/Uvais5/Health-end-to-end-project" target="_blank" 
+                        class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">
+                        View GitHub &rarr;
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="card-container reveal-element" style="transition-delay: 0.5s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center text-gray-500">
+                            No Demo/Video Available
+                        </div>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Detect Behavior with Sensor Data (Time Series)</h5>
+                        <p class="text-gray-400 flex-grow text-sm">
+                            A multi-class classification model analyzing time-series sensor data to accurately 
+                            detect and categorize human behaviors. (Machine Learning)
+                        </p>
+                        <a href="https://github.com/Uvais5/CMI---Detect-Behavior-with-Sensor-Data" target="_blank" 
+                        class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">
+                        View GitHub &rarr;
+                        </a>
+                    </div>
+                </div>
+                <div class="card-container reveal-element" style="transition-delay: 0.7s;">
+                    <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                        <div class="w-full aspect-video rounded-lg mb-4 bg-gray-800 flex items-center justify-center text-gray-500">
+                            No Demo/Video Available
+                        </div>
+                        <h5 class="text-xl font-bold mb-2 text-cyan-300">Hate Speech Detection (NLP Model)</h5>
+                        <p class="text-gray-400 flex-grow text-sm">
+This project provides an end-to-end solution for detecting hate speech in text data. It encompasses everything from data preprocessing and model training to deployment, making it a comprehensive toolkit for anyone looking to implement hate speech detection in their applications. The goal is to create a robust system that can identify and flag harmful content, contributing to safer online environments.
+                        </p>
+                        <a href="https://github.com/Uvais5/Hate_Speech_Detection_end_to_end" target="_blank"
+                        class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">
+                        View GitHub &rarr;
+                        </a>
+                    </div>
+                </div>
 
             </div>
         </section>
+        <div class="md:col-span-2"><h4 class="text-2xl font-bold text-sky-400 mt-12 mb-4 border-b border-gray-800 pb-2 reveal-element">Data Scraping Projects</h4></div>
+        <div class="card-container reveal-element" style="transition-delay: 0.3s;">
+            <div class="professional-card p-6 rounded-2xl shadow-xl flex flex-col">
+                <h5 class="text-xl font-bold mb-2 text-cyan-300">Song Lyrics Scraper & NLP Dataset (2017–2024)</h5>
+                <p class="text-gray-400 flex-grow text-sm">
+                    A web scraping project resulting in a comprehensive, quality-vetted NLP dataset of song lyrics from top artists, hosted on Kaggle. (Scraper/Data Engineering)
+                </p>
+                <a href="https://www.kaggle.com/datasets/uvaissaifi/top-artist-songs-with-lyrics-20172024/data" target="_blank" 
+                class="mt-4 inline-flex items-center text-sky-400 hover:text-sky-300 font-semibold transition duration-300 ripple-btn">
+                View Kaggle &rarr;
+                </a>
+            </div>
+        </div>
+        <div class="w-full h-px bg-gray-800 my-16 reveal-element"></div>
         
-        <section id="languages" class="py-16">
-            <h3 class="text-4xl font-bold text-center mb-12 text-teal-400">Language Proficiency</h3>
-            <div class="max-w-4xl mx-auto grid sm:grid-cols-3 gap-6 text-center">
-                <div class="professional-card p-6 rounded-xl shadow-lg border-b-4 border-sky-500">
-                    <p class="text-2xl font-bold text-teal-300">English</p>
-                    <p class="text-gray-400 mt-2">Native / Full Professional Proficiency</p>
+        <!-- Certifications Section -->
+        <section id="certifications" class="py-16">
+            <h3 class="text-4xl font-bold text-center mb-12 text-cyan-400 reveal-element">Key Certifications</h3>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <div class="card-container reveal-element" style="transition-delay: 0.1s;">
+                    <a href="https://www.coursera.org/account/accomplishments/verify/49UCB3J3FI3G" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-pink-500 block ripple-btn">
+                        <p class="text-sm font-medium text-pink-400 mb-1">DeepLearning.AI & Coursera</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Generative AI with Large Language Models</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Focus: RAG, Fine-tuning, Deployment.</span>
+                    </a>
                 </div>
-                <div class="professional-card p-6 rounded-xl shadow-lg border-b-4 border-sky-500">
-                    <p class="text-2xl font-bold text-teal-300">Hindi</p>
-                    <p class="text-gray-400 mt-2">Native / Full Professional Proficiency</p>
+                <div class="card-container reveal-element" style="transition-delay: 0.8s;">
+                    <a href="https://drive.google.com/file/d/1R7Mt2Znc7W8mP4_Kdw7Qf6Vzyv4m_dY0/view" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-sky-500 block ripple-btn">
+                        <p class="text-sm font-medium text-sky-400 mb-1">Private Course / Self-Paced</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Python with Data Science</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Core Python, Data Analysis, and ML fundamentals.</span>
+                    </a>
                 </div>
-                <div class="professional-card p-6 rounded-xl shadow-lg border-b-4 border-sky-500">
-                    <p class="text-2xl font-bold text-teal-300">Japanese</p>
-                    <p class="text-gray-400 mt-2">Intermediate Proficiency (N4/N5)</p>
+
+                <div class="card-container reveal-element" style="transition-delay: 0.9s;">
+                    <a href="https://www.udemy.com/certificate/UC-4c43ffcc-4dae-4638-bbdc-d6a780133712/" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-sky-500 block ripple-btn">
+                        <p class="text-sm font-medium text-sky-400 mb-1">Udemy</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Data Scientist BootCamp</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Full-stack curriculum in Data Science.</span>
+                    </a>
                 </div>
+
+                <div class="card-container reveal-element" style="transition-delay: 1.0s;">
+                    <a href="https://drive.google.com/drive/u/0/folders/1Ys6ooPiKuZVRYT5MRiLO5UQqVXNaD8y1" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-sky-500 block ripple-btn">
+                        <p class="text-sm font-medium text-sky-400 mb-1">SuperDataScience • Udemy</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Machine Learning A-Z™ (Hands-On Python & R)</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">In-depth coverage of classical ML algorithms.</span>
+                    </a>
+                </div>
+
+                <div class="card-container reveal-element" style="transition-delay: 1.1s;">
+                    <a href="https://www.coursera.org/account/accomplishments/verify/RVJGB5GZDKDN" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-sky-500 block ripple-btn">
+                        <p class="text-sm font-medium text-sky-400 mb-1">Coursera • Duke University</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Managing Big Data with MySQL</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Focus on efficient data querying and management.</span>
+                    </a>
+                </div>
+                <div class="card-container reveal-element" style="transition-delay: 0.1s;">
+                    <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15963212" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-pink-500 block ripple-btn">
+                        <p class="text-sm font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Explore Generative AI with the Gemini API</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Hands-on application of Gemini for real-world tasks.</span>
+                    </a>
+                </div>
+
+                <div class="card-container reveal-element" style="transition-delay: 0.2s;">
+                    <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14954330" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-pink-500 block ripple-btn">
+                        <p class="text-sm font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Build Real-World AI Apps with Gemini & Imagen</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Mastering multi-modal application development.</span>
+                    </a>
+                </div>
+
+                <div class="card-container reveal-element" style="transition-delay: 0.3s;">
+                    <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/14924177" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-pink-500 block ripple-btn">
+                        <p class="text-sm font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Prompt Design in Vertex AI</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Specializing in effective prompt engineering.</span>
+                    </a>
+                </div>
+
+                <div class="card-container reveal-element" style="transition-delay: 0.4s;">
+                    <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15379070" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-pink-500 block ripple-btn">
+                        <p class="text-sm font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Develop GenAI App with Gemini & Streamlit</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Practical GenAI application development and deployment.</span>
+                    </a>
+                </div>
+
+                <div class="card-container reveal-element" style="transition-delay: 0.5s;">
+                    <a href="https://www.cloudskillsboost.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/15037547" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-pink-500 block ripple-btn">
+                        <p class="text-sm font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Inspect Rich Documents with Gemini Multimodality & RAG</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Advanced RAG for multi-modal document analysis.</span>
+                    </a>
+                </div>
+
+                <div class="card-container reveal-element" style="transition-delay: 0.6s;">
+                    <a href="https://www.skills.google/public_profiles/951beb9e-aecb-4dab-b5cd-2e8ce0e16d00/badges/17433030" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-pink-500 block ripple-btn">
+                        <p class="text-sm font-medium text-pink-400 mb-1">Google Cloud Skills Boost</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Natural Language Processing on Google Cloud</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Practical NLP implementation on GCP.</span>
+                    </a>
+                </div>
+
+                <div class="card-container reveal-element" style="transition-delay: 0.7s;">
+                    <a href="https://certificate.hack2skill.com/user/GenAI5-28M/2025H2S04GENAI-A01204" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-pink-500 block ripple-btn">
+                        <p class="text-sm font-medium text-pink-400 mb-1">Hack2Skill</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Gen AI Academy</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Comprehensive Generative AI training.</span>
+                    </a>
+                </div>
+
+                
+
+                <div class="card-container reveal-element" style="transition-delay: 1.2s;">
+                    <a href="https://drive.google.com/drive/u/0/folders/1Ys6ooPiKuZVRYT5MRiLO5UQqVXNaD8y1" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-amber-500 block ripple-btn">
+                        <p class="text-sm font-medium text-amber-400 mb-1">Ramjas College, Delhi University</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Certification in Japanese Language N5</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Foundation level Japanese proficiency.</span>
+                    </a>
+                </div>
+
+                <div class="card-container reveal-element" style="transition-delay: 1.3s;">
+                    <a href="https://drive.google.com/drive/u/0/folders/1Ys6ooPiKuZVRYT5MRiLO5UQqVXNaD8y1" target="_blank" class="professional-card p-5 rounded-2xl shadow-xl border-l-4 border-amber-500 block ripple-btn">
+                        <p class="text-sm font-medium text-amber-400 mb-1">St. Stephen's College, Delhi University</p>
+                        <h4 class="text-xl font-bold text-cyan-300">Diploma in Japanese Language N4</h4>
+                        <span class="text-xs text-gray-400 mt-1 block">Intermediate level Japanese proficiency.</span>
+                    </a>
+                </div>
+
             </div>
         </section>
-        
-        <div class="w-full h-px bg-gray-700 my-12"></div>
 
+        <div class="w-full h-px bg-gray-800 my-16 reveal-element"></div>
+
+        <!-- Contact Section -->
         <section id="contact" class="py-16 text-center">
-            <h3 class="text-3xl font-bold mb-4 text-teal-400">Let's Connect and Collaborate</h3>
-            <p class="text-gray-400 mb-8 max-w-xl mx-auto">
-                Reach out for inquiries, project proposals, or discussions on the future of Generative AI and Data Science.
+            <h3 class="text-3xl font-bold mb-4 text-cyan-400 reveal-element">Let's Connect and Collaborate</h3>
+            <p class="text-gray-400 mb-8 max-w-xl mx-auto reveal-element" style="transition-delay: 0.1s;">
+                I am actively seeking roles where I can apply my expertise in Generative AI and end-to-end Machine Learning solutions.
             </p>
-            <div class="flex justify-center space-x-6 flex-wrap gap-y-4">
-                <a href="mailto:uvaissaifi523@gmail.com" class="inline-block px-6 py-3 border-2 border-teal-600 text-teal-400 font-semibold rounded-full hover:bg-teal-600 hover:text-white transition duration-300 transform hover:scale-[1.05]">
+            <div class="flex justify-center space-x-6 flex-wrap gap-y-4 reveal-element" style="transition-delay: 0.2s;">
+                <a href="mailto:uvaissaifi523@gmail.com" class="inline-block px-6 py-3 border-2 border-cyan-500 text-cyan-400 font-semibold rounded-full hover:bg-cyan-600 hover:text-white transition duration-300 transform hover:scale-[1.05] ripple-btn">
                     Email: uvaissaifi523@gmail.com
+                </a>
+                <a href="https://github.com/Uvais5" target="_blank" class="inline-block px-6 py-3 bg-gray-800 text-cyan-400 font-semibold rounded-full hover:bg-gray-700 transition duration-300 transform hover:scale-[1.05] ripple-btn">
+                    GitHub Profile
                 </a>
             </div>
         </section>
 
     </main>
 
-    <footer class="bg-[#1f2937] mt-12 py-6 border-t border-gray-700">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-500 text-sm">
-            &copy; 2025 Uvais Saifi | Data Science Portfolio. All rights reserved.
+    <footer class="bg-[#0a0a0a] mt-12 py-6 border-t border-gray-800 relative z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600 text-sm">
+            &copy; 2025 Uvais Saifi | Advanced Data Science Portfolio. All rights reserved.
         </div>
     </footer>
     
+    <!-- SCRIPT FOR THREE.JS MORPHING ANIMATION (Advanced Feature 6) -->
+    <script type="module">
+    import * as THREE from "three";
+    import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+    import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+    import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+    import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+    import { AfterimagePass } from "three/addons/postprocessing/AfterimagePass.js";
+    import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+    const PARTICLE_COUNT = 15000;
+    const SPARK_COUNT = 2000;
+    const STAR_COUNT = 7000;
+
+    let scene, camera, renderer, composer, controls;
+    let particles, sparkles, stars;
+    let clock = new THREE.Clock();
+    let currentPattern = 0, isTrans = false, prog = 0;
+    const morphSpeed = .03;
+
+    function normalise(points, size) {
+        if (points.length === 0) return [];
+        const box = new THREE.Box3().setFromPoints(points);
+        const maxDim = Math.max(...box.getSize(new THREE.Vector3()).toArray()) || 1;
+        const centre = box.getCenter(new THREE.Vector3());
+        return points.map(p => p.clone().sub(centre).multiplyScalar(size / maxDim));
+    }
+
+    function torusKnot(n) {
+        const geometry = new THREE.TorusKnotGeometry(10, 3, 200, 16, 2, 3);
+        const points = [];
+        const positionAttribute = geometry.attributes.position;
+        for (let i = 0; i < positionAttribute.count; i++) {
+            points.push(new THREE.Vector3().fromBufferAttribute(positionAttribute, i));
+        }
+        const result = [];
+        for (let i = 0; i < n; i++) {
+            result.push(points[i % points.length].clone());
+        }
+        return normalise(result, 50);
+    }
+
+    function halvorsen(n) {
+        const pts = [];
+        let x = 0.1, y = 0, z = 0;
+        const a = 1.89;
+        const dt = 0.005;
+        for (let i = 0; i < n * 25; i++) {
+            const dx = -a * x - 4 * y - 4 * z - y * y;
+            const dy = -a * y - 4 * z - 4 * x - z * z;
+            const dz = -a * z - 4 * x - 4 * y - x * x;
+            x += dx * dt;
+            y += dy * dt;
+            z += dz * dt;
+            if (i > 200 && i % 25 === 0) {
+                pts.push(new THREE.Vector3(x, y, z));
+            }
+            if (pts.length >= n) break;
+        }
+        while(pts.length < n) pts.push(pts[Math.floor(Math.random()*pts.length)].clone());
+        return normalise(pts, 60);
+    }
+
+    function dualHelix(n) {
+        const pts = [];
+        const turns = 5;
+        const radius = 15;
+        const height = 40;
+        for (let i = 0; i < n; i++) {
+            const isSecondHelix = i % 2 === 0;
+            const angle = (i / n) * Math.PI * 2 * turns;
+            const y = (i / n) * height - height / 2;
+            const r = radius + (isSecondHelix ? 5 : -5);
+            const x = Math.cos(angle) * r;
+            const z = Math.sin(angle) * r;
+            pts.push(new THREE.Vector3(x, y, z));
+        }
+        return normalise(pts, 60);
+    }
+
+    function deJong(n) {
+        const pts = [];
+        let x = 0.1, y = 0.1;
+        const a = 1.4, b = -2.3, c = 2.4, d = -2.1;
+        for (let i = 0; i < n; i++) {
+            const xn = Math.sin(a * y) - Math.cos(b * x);
+            const yn = Math.sin(c * x) - Math.cos(d * y);
+            x = xn;
+            y = yn;
+            const z = Math.sin(x * y * 0.5);
+            pts.push(new THREE.Vector3(x, y, z));
+        }
+        return normalise(pts, 55);
+    }
+
+
+    const PATTERNS = [torusKnot, halvorsen, dualHelix, deJong];
+
+    function createStars(){const geo=new THREE.BufferGeometry();const pos=new Float32Array(STAR_COUNT*3);const col=new Float32Array(STAR_COUNT*3);const size=new Float32Array(STAR_COUNT);const rnd=new Float32Array(STAR_COUNT);const R=900;for(let i=0;i<STAR_COUNT;i++){const i3=i*3,θ=Math.random()*2*Math.PI,φ=Math.acos(2*Math.random()-1),r=R*Math.cbrt(Math.random());pos[i3]=r*Math.sin(φ)*Math.cos(θ);pos[i3+1]=r*Math.sin(φ)*Math.sin(θ);pos[i3+2]=r*Math.cos(φ);const c=new THREE.Color().setHSL(Math.random()*.6,.3+.3*Math.random(),.55+.35*Math.random());col[i3]=c.r;col[i3+1]=c.g;col[i3+2]=c.b;size[i]=.25+Math.pow(Math.random(),4)*2.1;rnd[i]=Math.random()*Math.PI*2}geo.setAttribute("position",new THREE.BufferAttribute(pos,3));geo.setAttribute("color",new THREE.BufferAttribute(col,3));geo.setAttribute("size",new THREE.BufferAttribute(size,1));geo.setAttribute("random",new THREE.BufferAttribute(rnd,1));const mat=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`attribute float size;attribute float random;
+    varying vec3 vColor;varying float vRnd;
+    void main(){vColor=color;vRnd=random;vec4 mv=modelViewMatrix*vec4(position,1.);gl_PointSize=size*(250./-mv.z);gl_Position=projectionMatrix*mv;}`,fragmentShader:`uniform float time;varying vec3 vColor;varying float vRnd;
+    void main(){vec2 uv=gl_PointCoord-.5;float d=length(uv);float a=1.-smoothstep(.4,.5,d);a*=.7+.3*sin(time*(.6+vRnd*.3)+vRnd*5.);if(a<.02)discard;gl_FragColor=vec4(vColor,a);}`,transparent:true,depthWrite:false,vertexColors:true,blending:THREE.AdditiveBlending});return new THREE.Points(geo,mat)}
+
+    function makeParticles(count,palette){
+        const geo=new THREE.BufferGeometry();
+        const pos=new Float32Array(count*3);
+        const col=new Float32Array(count*3);
+        const size=new Float32Array(count);
+        const rnd=new Float32Array(count*3);
+        for(let i=0;i<count;i++){
+            const i3=i*3,base=palette[Math.random()*palette.length|0],hsl={h:0,s:0,l:0};
+            base.getHSL(hsl);
+            hsl.h+=(Math.random()-.5)*.05;
+            hsl.s=Math.min(1,Math.max(.7,hsl.s+(Math.random()-.5)*.3));
+            hsl.l=Math.min(.9,Math.max(.5,hsl.l+(Math.random()-.5)*.4));
+            const c=new THREE.Color().setHSL(hsl.h,hsl.s,hsl.l);
+            col[i3]=c.r;col[i3+1]=c.g;col[i3+2]=c.b;
+            size[i]=.7+Math.random()*1.1;
+            rnd[i3]=Math.random()*10;
+            rnd[i3+1]=Math.random()*Math.PI*2;
+            rnd[i3+2]=.5+.5*Math.random();
+        }
+        geo.setAttribute("position",new THREE.BufferAttribute(pos,3));
+        geo.setAttribute("color",new THREE.BufferAttribute(col,3));
+        geo.setAttribute("size",new THREE.BufferAttribute(size,1));
+        geo.setAttribute("random",new THREE.BufferAttribute(rnd,3));
+        
+        const mat=new THREE.ShaderMaterial({
+            uniforms:{time:{value:0},hueSpeed:{value:0.12}},
+            vertexShader:`uniform float time;attribute float size;attribute vec3 random;
+    varying vec3 vCol;varying float vR;
+    void main(){
+        vCol=color;vR=random.z;
+        vec3 p=position;
+        float t=time*.25*random.z;
+        float ax=t+random.y, ay=t*.75+random.x;
+        float amp=(.6+sin(random.x+t*.6)*.3)*random.z;
+        p.x+=sin(ax+p.y*.06+random.x*.1)*amp;
+        p.y+=cos(ay+p.z*.06+random.y*.1)*amp;
+        p.z+=sin(ax*.85+p.x*.06+random.z*.1)*amp;
+        vec4 mv=modelViewMatrix*vec4(p,1.);
+        float pulse=.9+.1*sin(time*1.15+random.y);
+        gl_PointSize=size*pulse*(350./-mv.z);
+        gl_Position=projectionMatrix*mv;
+    }`,
+            fragmentShader:`
+    uniform float time;
+    uniform float hueSpeed;
+    varying vec3 vCol;
+    varying float vR;
+
+    vec3 hueShift(vec3 c, float h) {
+        const vec3 k = vec3(0.57735);
+        float cosA = cos(h);
+        float sinA = sin(h);
+        return c * cosA + cross(k, c) * sinA + k * dot(k, c) * (1.0 - cosA);
+    }
+
+    void main() {
+        vec2 uv = gl_PointCoord - 0.5;
+        float d = length(uv);
+        
+        float core = smoothstep(0.05, 0.0, d);
+        float angle = atan(uv.y, uv.x);
+        float flare = pow(max(0.0, sin(angle * 6.0 + time * 2.0 * vR)), 4.0);
+        flare *= smoothstep(0.5, 0.0, d);
+        float glow = smoothstep(0.4, 0.1, d);
+        
+        float alpha = core * 1.0 + flare * 0.5 + glow * 0.2;
+        
+        vec3 color = hueShift(vCol, time * hueSpeed);
+        vec3 finalColor = mix(color, vec3(1.0, 0.95, 0.9), core);
+        finalColor = mix(finalColor, color, flare * 0.5 + glow * 0.5);
+
+        if (alpha < 0.01) discard;
+        
+        gl_FragColor = vec4(finalColor, alpha);
+    }`,
+            transparent:true,depthWrite:false,vertexColors:true,blending:THREE.AdditiveBlending
+        });
+        return new THREE.Points(geo,mat);
+    }
+
+    function createSparkles(count) {
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(count * 3);
+        const size = new Float32Array(count);
+        const rnd = new Float32Array(count * 3);
+
+        for (let i = 0; i < count; i++) {
+            size[i] = 0.5 + Math.random() * 0.8;
+            rnd[i*3] = Math.random() * 10;
+            rnd[i*3+1] = Math.random() * Math.PI * 2;
+            rnd[i*3+2] = 0.5 + 0.5 * Math.random();
+        }
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geo.setAttribute('size', new THREE.BufferAttribute(size, 1));
+        geo.setAttribute('random', new THREE.BufferAttribute(rnd, 3));
+
+        const mat = new THREE.ShaderMaterial({
+            uniforms: { time: { value: 0 } },
+            vertexShader: `
+                uniform float time;
+                attribute float size;
+                attribute vec3 random;
+                void main() {
+                    vec3 p = position;
+                    float t = time * 0.25 * random.z;
+                    float ax = t + random.y, ay = t * 0.75 + random.x;
+                    float amp = (0.6 + sin(random.x + t * 0.6) * 0.3) * random.z;
+                    p.x += sin(ax + p.y * 0.06 + random.x * 0.1) * amp;
+                    p.y += cos(ay + p.z * 0.06 + random.y * 0.1) * amp;
+                    p.z += sin(ax * 0.85 + p.x * 0.06 + random.z * 0.1) * amp;
+                    vec4 mvPosition = modelViewMatrix * vec4(p, 1.0);
+                    gl_PointSize = size * (300.0 / -mvPosition.z);
+                    gl_Position = projectionMatrix * mvPosition;
+                }`,
+            fragmentShader: `
+                uniform float time;
+                void main() {
+                    float d = length(gl_PointCoord - vec2(0.5));
+                    float alpha = 1.0 - smoothstep(0.4, 0.5, d);
+                    if (alpha < 0.01) discard;
+                    gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
+                }`,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending
+        });
+
+        return new THREE.Points(geo, mat);
+    }
+
+
+    function init() {
+        scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x050203, .012);
+
+        camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, .1, 2500);
+        camera.position.set(0, 0, 80);
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(devicePixelRatio);
+        renderer.setSize(innerWidth, innerHeight);
+        document.getElementById("container").appendChild(renderer.domElement);
+
+        controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.screenSpacePanning = false;
+        controls.minDistance = 20;
+        controls.maxDistance = 200;
+        controls.target.set(0, 0, 0);
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
+
+        stars = createStars();
+        scene.add(stars);
+
+        const palette = [0xff3c78, 0xff8c00, 0xfff200, 0x00cfff, 0xb400ff, 0xffffff, 0xff4040].map(c => new THREE.Color(c));
+        particles = makeParticles(PARTICLE_COUNT, palette);
+        sparkles = createSparkles(SPARK_COUNT);
+        // particles are moved forward slightly to ensure they appear in front of any camera position 
+        // issues in a 3D context, though the primary z-index fix is handled by CSS.
+        particles.position.z = -10; 
+        scene.add(particles);
+        scene.add(sparkles);
+
+        composer = new EffectComposer(renderer);
+        composer.addPass(new RenderPass(scene, camera));
+        composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), .45, .5, .85));
+        const after = new AfterimagePass();
+        after.uniforms.damp.value = .92;
+        composer.addPass(after);
+        composer.addPass(new OutputPass());
+
+        applyPattern(currentPattern);
+
+        addEventListener("resize", () => {
+            camera.aspect = innerWidth / innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(innerWidth, innerHeight);
+            composer.setSize(innerWidth, innerHeight);
+        });
+        
+        document.getElementById('morphButton').addEventListener('click', () => {
+            if (!isTrans) {
+                beginMorph();
+            }
+        });
+    }
+
+    function applyPattern(i){
+        const pts = PATTERNS[i](PARTICLE_COUNT);
+        const particleArr = particles.geometry.attributes.position.array;
+        const sparkleArr = sparkles.geometry.attributes.position.array;
+        for(let j=0; j<PARTICLE_COUNT; j++){
+            const idx = j*3;
+            const p = pts[j] || new THREE.Vector3(); 
+            particleArr[idx] = p.x;
+            particleArr[idx+1] = p.y;
+            particleArr[idx+2] = p.z;
+            if (j < SPARK_COUNT) { 
+                sparkleArr[idx] = p.x;
+                sparkleArr[idx+1] = p.y;
+                sparkleArr[idx+2] = p.z;
+            }
+        }
+        particles.geometry.attributes.position.needsUpdate=true;
+        sparkles.geometry.attributes.position.needsUpdate=true;
+    }
+
+    function beginMorph(){
+        isTrans=true;
+        prog=0;
+        const next=(currentPattern+1)%PATTERNS.length;
+        const fromPts = particles.geometry.attributes.position.array.slice();
+        const toPts = PATTERNS[next](PARTICLE_COUNT);
+        
+        const to = new Float32Array(PARTICLE_COUNT*3);
+        if (toPts.length > 0) {
+            for (let j = 0; j < PARTICLE_COUNT; j++) {
+                const idx = j * 3, p = toPts[j];
+                to[idx] = p.x; to[idx + 1] = p.y; to[idx + 2] = p.z;
+            }
+            particles.userData = { from: fromPts, to, next };
+            sparkles.userData = { from: fromPts, to, next }; 
+        }
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta(), t = clock.getElapsedTime();
+
+        controls.update();
+
+        particles.material.uniforms.time.value = t;
+        sparkles.material.uniforms.time.value = t;
+
+        if (isTrans) {
+            prog += morphSpeed;
+            const eased = prog >= 1 ? 1 : 1 - Math.pow(1 - prog, 3);
+            const { from, to } = particles.userData;
+            if (to) {
+                const particleArr = particles.geometry.attributes.position.array;
+                const sparkleArr = sparkles.geometry.attributes.position.array;
+                for (let i = 0; i < particleArr.length; i++) {
+                    const val = from[i] + (to[i] - from[i]) * eased;
+                    particleArr[i] = val;
+                    if (i < sparkleArr.length) {
+                        sparkleArr[i] = val;
+                    }
+                }
+                particles.geometry.attributes.position.needsUpdate = true;
+                sparkles.geometry.attributes.position.needsUpdate = true;
+            }
+            if (prog >= 1) {
+                currentPattern = particles.userData.next;
+                isTrans = false;
+            }
+        }
+
+        composer.render(dt);
+    }
+
+    window.onload = function() {
+        init();
+        animate();
+    }
+    </script>
+
+
+    <!-- OLD ANIMATION LOGIC (KEPT STANDARD ANIMATIONS) AND NEW RESPONSIVE JAVASCRIPT -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const menuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const menuIcon = document.getElementById('menu-icon');
+        document.addEventListener('DOMContentLoaded', () => {
+            const header = document.getElementById('header');
+            const heroSection = document.getElementById('summary');
+            const spotlightOverlay = document.getElementById('spotlight-overlay');
+            const cardContainers = document.querySelectorAll('.card-container');
+            const rippleButtons = document.querySelectorAll('.ripple-btn');
             
-            // Function to toggle the mobile menu state
+            // --- 8. MOBILE MENU LOGIC (New Responsive Feature) ---
+            const menuButton = document.getElementById('menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIconOpen = document.getElementById('menu-icon-open');
+            const menuIconClose = document.getElementById('menu-icon-close');
+            const mobileLinks = document.querySelectorAll('[data-mobile-link]');
+
+            // Toggle function
             function toggleMenu() {
                 mobileMenu.classList.toggle('hidden');
-                
-                // Toggle icon between menu and close
-                if (mobileMenu.classList.contains('hidden')) {
-                    // Menu is closed, show hamburger icon
-                    menuIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>';
-                } else {
-                    // Menu is open, show close icon
-                    menuIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>';
-                }
+                menuIconOpen.classList.toggle('hidden');
+                menuIconClose.classList.toggle('hidden');
             }
 
             // Event listener for the hamburger button
-            menuButton.addEventListener('click', toggleMenu);
+            if (menuButton) {
+                menuButton.addEventListener('click', toggleMenu);
+            }
 
-            // Close menu when a link inside it is clicked (for navigation)
-            document.querySelectorAll('#mobile-menu a').forEach(link => {
+            // Close menu when a link is clicked (for better UX)
+            mobileLinks.forEach(link => {
                 link.addEventListener('click', () => {
                     if (!mobileMenu.classList.contains('hidden')) {
                         toggleMenu();
                     }
                 });
             });
+
+
+            // --- 1. Header Scroll Animation (Shrink/Change Style) ---
+            const headerObserverOptions = {
+                rootMargin: '-50px 0px 0px 0px',
+                threshold: 0.01
+            };
+
+            const headerObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        header.classList.remove('scrolled');
+                    } else {
+                        header.classList.add('scrolled');
+                    }
+                });
+            }, headerObserverOptions);
+
+            if (heroSection) {
+                headerObserver.observe(heroSection);
+            }
+
+            // --- 2. Element Reveal on Scroll Animation (IntersectionObserver) ---
+            const revealElements = document.querySelectorAll('.reveal-element');
+
+            const revealObserverOptions = {
+                root: null,
+                rootMargin: '0px 0px -15% 0px',
+                threshold: 0.01
+            };
+
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, revealObserverOptions);
+
+            revealElements.forEach(element => {
+                revealObserver.observe(element);
+            });
+
+            // Fallback for very short pages
+            if (revealElements.length > 0 && document.body.scrollHeight < window.innerHeight * 1.5) {
+                revealElements.forEach(element => element.classList.add('is-visible'));
+            }
+
+            // --- 3. Interactive Mouse Spotlight (Advanced Feature 1) ---
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX;
+                const y = e.clientY;
+                
+                if (spotlightOverlay) {
+                    spotlightOverlay.style.background = `radial-gradient(
+                        circle 350px at ${x}px ${y}px, 
+                        rgba(0, 191, 255, 0.15) 0%, 
+                        rgba(0, 0, 0, 0.0) 100%
+                    )`;
+                }
+            });
+
+            // --- 4. 3D Tilt Cards on Hover (Advanced Feature 2) ---
+            cardContainers.forEach(container => {
+                const card = container.querySelector('.professional-card');
+                if (!card) return;
+
+                const MAX_TILT = 10; 
+
+                container.addEventListener('mousemove', (e) => {
+                    const rect = container.getBoundingClientRect();
+                    
+                    const x = e.clientX - rect.left; 
+                    const y = e.clientY - rect.top;  
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+
+                    const rotateX = ((centerY - y) / centerY) * MAX_TILT;
+                    const rotateY = ((x - centerX) / centerX) * MAX_TILT;
+
+                    card.style.transform = `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+                });
+
+                container.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1200px) rotateX(0deg) rotateY(0deg) scale(1)';
+                });
+            });
+
+
+            // --- 5. Parallax Scroll Effect (Advanced Feature 3) ---
+            const parallaxImg = document.getElementById('parallax-img');
+            const parallaxH2 = document.getElementById('parallax-text-h2');
+            const parallaxPWrapper = document.getElementById('parallax-text-p-wrapper'); // Target the new wrapper
+
+            window.addEventListener('scroll', () => {
+                const scrollY = window.scrollY;
+                
+                // The parallax factors remain subtle to avoid the previous overlap issue
+                if (parallaxImg) {
+                    parallaxImg.style.transform = `translateY(${scrollY * -0.1}px)`; 
+                }
+                
+                if (parallaxH2) {
+                    parallaxH2.style.transform = `translateY(${scrollY * -0.05}px)`; 
+                }
+                if (parallaxPWrapper) { // Use the new wrapper element
+                    parallaxPWrapper.style.transform = `translateY(${scrollY * -0.05}px)`; 
+                }
+            });
+
+
+            // --- 7. Click Ripple Effect (Advanced Feature 5) ---
+            rippleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    const rect = button.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height) * 1.5;
+                    
+                    // Create the ripple element
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('ripple');
+
+                    // Calculate position relative to the button
+                    const x = e.clientX - rect.left - (size / 2);
+                    const y = e.clientY - rect.top - (size / 2);
+
+                    ripple.style.width = ripple.style.height = `${size}px`;
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+
+                    this.appendChild(ripple);
+
+                    // Remove ripple after animation ends
+                    ripple.addEventListener('animationend', () => {
+                        ripple.remove();
+                    });
+                });
+            });
         });
     </script>
+
 </body>
 </html>
